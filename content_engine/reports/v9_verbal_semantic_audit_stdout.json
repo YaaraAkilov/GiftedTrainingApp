@@ -1,0 +1,14 @@
+{
+  "active_verbal": 151,
+  "by_category": {
+    "analogies": 31,
+    "sentence_completion": 30,
+    "vocabulary": 30,
+    "odd_one_out": 20,
+    "nonword_context": 20,
+    "reading_comprehension": 20
+  },
+  "errors": [],
+  "warnings": [],
+  "passed": true
+}

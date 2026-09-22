@@ -1,0 +1,11 @@
+{
+  "name": "אתגר המחוננים",
+  "short_name": "אתגר המחוננים",
+  "start_url": "./",
+  "display": "standalone",
+  "lang": "he",
+  "dir": "rtl",
+  "background_color": "#f6f7fb",
+  "theme_color": "#111827",
+  "icons": []
+}

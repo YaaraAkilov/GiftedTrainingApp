@@ -1,0 +1,2447 @@
+{
+ "gold_standard_info": {
+  "total": 25,
+  "levels": {
+   "4": 15,
+   "5": 10
+  },
+  "categories": {
+   "logic": 5,
+   "quantitative": 5,
+   "series": 5,
+   "shapes_spatial": 6,
+   "analogies": 4
+  },
+  "composition": "11 from the audited pilot that genuinely scored level 4-5 under DIFFICULTY_RUBRIC.md + 14 newly authored to round out category balance"
+ },
+ "questions": [
+  {
+   "id": "q_p012",
+   "category": "logic",
+   "subcategory": "ordering_constraints",
+   "skills": [
+    "constraint_satisfaction",
+    "sequencing",
+    "adjacency"
+   ],
+   "difficulty": 5,
+   "prompt": "חמישה ספרים בצבעים שונים מסודרים על מדף: אדום, כחול, ירוק, צהוב ולבן - לא בהכרח בסדר הזה. ידוע: הספר הכחול נמצא מיד מימין לספר האדום. הספר הירוק נמצא בקצה השמאלי. הספר הלבן נמצא מיד משמאל לספר הצהוב. הספר האדום אינו בקצה, וגם הספר הצהוב אינו בקצה. מה הסדר המלא, משמאל לימין?",
+   "options": [
+    {
+     "id": "a",
+     "text": "ירוק, לבן, צהוב, אדום, כחול",
+     "is_correct": true,
+     "distractor_type": null
+    },
+    {
+     "id": "b",
+     "text": "ירוק, אדום, כחול, לבן, צהוב",
+     "is_correct": false,
+     "distractor_type": "violates_constraint"
+    },
+    {
+     "id": "c",
+     "text": "לבן, ירוק, צהוב, אדום, כחול",
+     "is_correct": false,
+     "distractor_type": "violates_constraint"
+    },
+    {
+     "id": "d",
+     "text": "ירוק, לבן, אדום, כחול, צהוב",
+     "is_correct": false,
+     "distractor_type": "violates_constraint"
+    }
+   ],
+   "explanation": "ירוק בקצה השמאלי קובע מקום 1. שני הזוגות הצמודים (אדום-כחול, לבן-צהוב) חייבים לתפוס את המקומות 2-3 ו-4-5 יחד; מכיוון שגם אדום וגם צהוב אינם יכולים להיות בקצה (מקום 5), הזוג לבן-צהוב חייב להיות ב-2-3 (כדי שצהוב לא ייפול במקום 5), והזוג אדום-כחול ב-4-5.",
+   "reasoning_steps": [
+    "ירוק קבוע במקום 1",
+    "נותרים 4 מקומות (2-5) לשני זוגות צמודים: אדום-כחול ולבן-צהוב",
+    "הזוגות חייבים לתפוס בלוקים שלמים: (2,3) ו-(4,5)",
+    "מכיוון שאדום וצהוב אסורים בקצה (מקום 5), צהוב לא יכול להיות בזוג שממוקם ב-(4,5) - לכן הזוג לבן-צהוב הוא ב-(2,3): לבן=2, צהוב=3",
+    "הזוג אדום-כחול נמצא ב-(4,5): אדום=4, כחול=5"
+   ],
+   "validation_stages": {
+    "structural_validation": true,
+    "logical_validation": true,
+    "logical_validation_status": "passed",
+    "content_quality_validation": true,
+    "difficulty_validation": true,
+    "approved": true
+   },
+   "rubric_score": {
+    "I": 3,
+    "H": 3,
+    "R": 3,
+    "D": 2,
+    "W": 3,
+    "total": 14,
+    "rubric_level": 5,
+    "note": "5 ישויות, 4 אילוצי סמיכות בו-זמניים, שני פתרונות-מראה מתחרים שיש לשלול"
+   },
+   "prerequisite_knowledge": [],
+   "formal_spec": {
+    "kind_group": "ordering_csp",
+    "entities": [
+     "red",
+     "blue",
+     "green",
+     "yellow",
+     "white"
+    ],
+    "positions": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "constraints": [
+     {
+      "type": "eq",
+      "entity": "green",
+      "pos": 1
+     },
+     {
+      "type": "immediately_right",
+      "a": "red",
+      "b": "blue"
+     },
+     {
+      "type": "immediately_right",
+      "a": "white",
+      "b": "yellow"
+     },
+     {
+      "type": "not_eq",
+      "entity": "red",
+      "pos": 1
+     },
+     {
+      "type": "not_eq",
+      "entity": "red",
+      "pos": 5
+     },
+     {
+      "type": "not_eq",
+      "entity": "yellow",
+      "pos": 1
+     },
+     {
+      "type": "not_eq",
+      "entity": "yellow",
+      "pos": 5
+     }
+    ],
+    "expected_assignment": {
+     "green": 1,
+     "white": 2,
+     "yellow": 3,
+     "red": 4,
+     "blue": 5
+    }
+   },
+   "logical_validation_detail": "unique CSP solution={'red': 4, 'blue': 5, 'green': 1, 'yellow': 3, 'white': 2}; expected={'green': 1, 'white': 2, 'yellow': 3, 'red': 4, 'blue': 5}"
+  },
+  {
+   "id": "q_p016",
+   "category": "logic",
+   "subcategory": "set_relations",
+   "skills": [
+    "deductive_reasoning",
+    "chained_conditionals"
+   ],
+   "difficulty": 4,
+   "prompt": "מי שיודע לשחק שחמט יודע גם לשחק ברידג'. אף אחד שיודע לשחק פוקר אינו יודע לשחק ברידג'. תומר יודע לשחק שחמט. מה נובע בהכרח?",
+   "options": [
+    {
+     "id": "a",
+     "text": "תומר אינו יודע לשחק פוקר",
+     "is_correct": true,
+     "distractor_type": null
+    },
+    {
+     "id": "b",
+     "text": "תומר יודע לשחק פוקר",
+     "is_correct": false,
+     "distractor_type": "contradicts_derivation"
+    },
+    {
+     "id": "c",
+     "text": "תומר אינו יודע לשחק ברידג'",
+     "is_correct": false,
+     "distractor_type": "contradicts_premise"
+    },
+    {
+     "id": "d",
+     "text": "אי אפשר לדעת אם תומר יודע לשחק פוקר",
+     "is_correct": false,
+     "distractor_type": "false_uncertainty"
+    }
+   ],
+   "explanation": "תומר יודע שחמט ולכן יודע ברידג'. מכיוון שאף פוקריסט אינו יודע ברידג', ותומר כן יודע ברידג', הוא אינו יכול להיות פוקריסט.",
+   "reasoning_steps": [
+    "שחמט→ברידג': תומר יודע שחמט, לכן יודע ברידג'",
+    "הכלל השני: פוקר→לא-ברידג' (שקול ל: ברידג'→לא-פוקר)",
+    "תומר יודע ברידג', לכן הוא אינו יודע פוקר"
+   ],
+   "validation_stages": {
+    "structural_validation": true,
+    "logical_validation": true,
+    "logical_validation_status": "passed",
+    "content_quality_validation": true,
+    "difficulty_validation": true,
+    "approved": true
+   },
+   "rubric_score": {
+    "I": 3,
+    "H": 2,
+    "R": 3,
+    "D": 2,
+    "W": 2,
+    "total": 12,
+    "rubric_level": 4,
+    "note": "שרשור שני כללים תנייתיים עם קונטרפוזיציה על הכלל השני"
+   },
+   "prerequisite_knowledge": [],
+   "formal_spec": {
+    "kind_group": "propositional_chain",
+    "rules": [
+     {
+      "if": "CHESS",
+      "if_val": true,
+      "then": "BRIDGE",
+      "then_val": true
+     },
+     {
+      "if": "BRIDGE",
+      "if_val": true,
+      "then": "POKER",
+      "then_val": false
+     }
+    ],
+    "given_facts": {
+     "CHESS": true
+    },
+    "query": "POKER",
+    "expected_result": "false"
+   },
+   "logical_validation_detail": "closure derived query='POKER' as false (expected false); full closure={'CHESS': True, 'BRIDGE': True, 'POKER': False}"
+  },
+  {
+   "id": "q_p018",
+   "category": "logic",
+   "subcategory": "trap_detection",
+   "skills": [
+    "deductive_reasoning",
+    "recognizing_invalid_inference"
+   ],
+   "difficulty": 4,
+   "prompt": "יש תלמידים בכיתה שאוהבים מתמטיקה. כל מי שאוהב מתמטיקה מצטיין במבחנים. עידו מצטיין במבחנים. מה נובע בהכרח?",
+   "options": [
+    {
+     "id": "a",
+     "text": "עידו בהכרח אוהב מתמטיקה",
+     "is_correct": false,
+     "distractor_type": "illegal_converse_bait"
+    },
+    {
+     "id": "b",
+     "text": "אי אפשר לדעת אם עידו אוהב מתמטיקה",
+     "is_correct": true,
+     "distractor_type": null
+    },
+    {
+     "id": "c",
+     "text": "עידו בהכרח אינו אוהב מתמטיקה",
+     "is_correct": false,
+     "distractor_type": "overreach"
+    },
+    {
+     "id": "d",
+     "text": "כל מי שמצטיין אוהב מתמטיקה",
+     "is_correct": false,
+     "distractor_type": "illegal_converse"
+    }
+   ],
+   "explanation": "הצטיינות במבחנים היא תוצאה אפשרית של אהבת מתמטיקה, אך לא בהכרח הסיבה היחידה - יכולות להיות סיבות אחרות להצטיינות.",
+   "reasoning_steps": [
+    "הכלל: מתמטיקה→הצטיינות (כיוון אחד בלבד)",
+    "עידו מצטיין - זה הצד השני של הכלל",
+    "לא ניתן להסיק את הסיבה מהתוצאה בלי מידע נוסף",
+    "לכן אי אפשר לדעת"
+   ],
+   "validation_stages": {
+    "structural_validation": true,
+    "logical_validation": true,
+    "logical_validation_status": "passed",
+    "content_quality_validation": true,
+    "difficulty_validation": true,
+    "approved": true
+   },
+   "rubric_score": {
+    "I": 2,
+    "H": 3,
+    "R": 2,
+    "D": 3,
+    "W": 1,
+    "total": 11,
+    "rubric_level": 4,
+    "note": "אותה מלכודת בדיוק במבנה אחר (כמת קיומי 'יש' במקום 'כל') - לא משנה את עומק ההסקה"
+   },
+   "prerequisite_knowledge": [],
+   "formal_spec": {
+    "kind_group": "propositional_chain",
+    "rules": [
+     {
+      "if": "MATHLOVE",
+      "if_val": true,
+      "then": "EXCEL",
+      "then_val": true
+     }
+    ],
+    "given_facts": {
+     "EXCEL": true
+    },
+    "query": "MATHLOVE",
+    "expected_result": "undetermined"
+   },
+   "logical_validation_detail": "closure derived query='MATHLOVE' as undetermined (expected undetermined); full closure={'EXCEL': True}"
+  },
+  {
+   "id": "q_p047",
+   "category": "quantitative",
+   "subcategory": "speed_time_distance",
+   "skills": [
+    "rate_time_distance",
+    "relative_motion",
+    "unit_conversion"
+   ],
+   "difficulty": 4,
+   "prompt": "מסוע נע במהירות 8 קמ\"ש. ילד רץ על המסוע (באותו כיוון) במהירות 4 קמ\"ש ביחס למסוע. אם אורך המסוע 600 מטר, כמה זמן ייקח לילד לעבור אותו?",
+   "options": [
+    {
+     "id": "a",
+     "text": "3 דקות",
+     "is_correct": true,
+     "distractor_type": null
+    },
+    {
+     "id": "b",
+     "text": "5 דקות",
+     "is_correct": false,
+     "distractor_type": "uses_single_speed_only"
+    },
+    {
+     "id": "c",
+     "text": "9 דקות",
+     "is_correct": false,
+     "distractor_type": "unit_confusion"
+    },
+    {
+     "id": "d",
+     "text": "1.5 דקות",
+     "is_correct": false,
+     "distractor_type": "miscalculation"
+    }
+   ],
+   "explanation": "המהירות הכוללת ביחס לקרקע: 8+4=12 קמ\"ש = 200 מטר לדקה. זמן מעבר: 600/200=3 דקות.",
+   "reasoning_steps": [
+    "חישוב מהירות משולבת: 8+4=12 קמ\"ש",
+    "המרת יחידות: 12 קמ\"ש = 12,000 מטר ל-60 דקות = 200 מטר לדקה",
+    "חישוב זמן המעבר: 600/200=3 דקות"
+   ],
+   "validation_stages": {
+    "structural_validation": true,
+    "logical_validation": true,
+    "logical_validation_status": "passed",
+    "content_quality_validation": true,
+    "difficulty_validation": true,
+    "approved": true
+   },
+   "rubric_score": {
+    "I": 3,
+    "H": 2,
+    "R": 2,
+    "D": 2,
+    "W": 2,
+    "total": 11,
+    "rubric_level": 4,
+    "note": "שילוב מהירות יחסית + המרת יחידות - שני שלבים לא-טריוויאליים תלויים זה בזה"
+   },
+   "prerequisite_knowledge": [],
+   "formal_spec": {
+    "kind_group": "arithmetic",
+    "params": {
+     "walkway": 8,
+     "child": 4,
+     "length_m": 600
+    },
+    "expression": "length_m / ((walkway+child)*1000/60)",
+    "expected": 3
+   },
+   "logical_validation_detail": "recomputed length_m / ((walkway+child)*1000/60) = 3.0; expected 3"
+  },
+  {
+   "id": "q_p050",
+   "category": "quantitative",
+   "subcategory": "work_rate",
+   "skills": [
+    "work_rate",
+    "combined_rates",
+    "multi_step"
+   ],
+   "difficulty": 5,
+   "prompt": "שלושה פועלים א, ב, ג עובדים יחד ומסיימים עבודה ב-4 שעות. פועל א לבדו היה מסיים אותה עבודה ב-12 שעות. פועל ב לבדו היה מסיים אותה ב-24 שעות. כמה זמן היה לוקח לפועל ג לבדו לסיים את העבודה?",
+   "options": [
+    {
+     "id": "a",
+     "text": "8 שעות",
+     "is_correct": true,
+     "distractor_type": null
+    },
+    {
+     "id": "b",
+     "text": "6 שעות",
+     "is_correct": false,
+     "distractor_type": "miscalculation"
+    },
+    {
+     "id": "c",
+     "text": "12 שעות",
+     "is_correct": false,
+     "distractor_type": "reused_given_data"
+    },
+    {
+     "id": "d",
+     "text": "24 שעות",
+     "is_correct": false,
+     "distractor_type": "reused_given_data"
+    }
+   ],
+   "explanation": "קצב משולב=1/4. קצב א=1/12, קצב ב=1/24. קצב ג=1/4-1/12-1/24=6/24-2/24-1/24=3/24=1/8, ולכן זמן ג=8 שעות.",
+   "reasoning_steps": [
+    "קצב עבודה משולב: 1/4",
+    "חיסור קצב א (1/12) וקצב ב (1/24) מהקצב המשולב",
+    "חישוב: 6/24-2/24-1/24=3/24=1/8",
+    "הפיכת הקצב לזמן: 8 שעות"
+   ],
+   "validation_stages": {
+    "structural_validation": true,
+    "logical_validation": true,
+    "logical_validation_status": "passed",
+    "content_quality_validation": true,
+    "difficulty_validation": true,
+    "approved": true
+   },
+   "rubric_score": {
+    "I": 3,
+    "H": 2,
+    "R": 3,
+    "D": 2,
+    "W": 3,
+    "total": 13,
+    "rubric_level": 5,
+    "note": "מערכת שלושה נעלמים (קצבי עבודה), דורשת חיסור קצבים ולא רק הצבה ישירה"
+   },
+   "prerequisite_knowledge": [],
+   "formal_spec": {
+    "kind_group": "arithmetic",
+    "params": {
+     "combined": 0.25,
+     "rateA": 0.08333333333333333,
+     "rateB": 0.041666666666666664
+    },
+    "expression": "1/(combined-rateA-rateB)",
+    "expected": 8
+   },
+   "logical_validation_detail": "recomputed 1/(combined-rateA-rateB) = 7.999999999999998; expected 8"
+  },
+  {
+   "id": "q_p074",
+   "category": "series",
+   "subcategory": "matrix_numeric",
+   "skills": [
+    "matrix_numeric",
+    "column_pattern"
+   ],
+   "difficulty": 5,
+   "prompt": "בטבלה הבאה כל עמודה בנויה לפי אותה חוקיות:\nעמודה 1: 12, 2, -9\nעמודה 2: 7, -3, -14\nעמודה 3: 13, 3, ?",
+   "options": [
+    {
+     "id": "a",
+     "text": "-8",
+     "is_correct": true,
+     "distractor_type": null
+    },
+    {
+     "id": "b",
+     "text": "-10",
+     "is_correct": false,
+     "distractor_type": "partial_pattern_only"
+    },
+    {
+     "id": "c",
+     "text": "-9",
+     "is_correct": false,
+     "distractor_type": "reused_given_data"
+    },
+    {
+     "id": "d",
+     "text": "3",
+     "is_correct": false,
+     "distractor_type": "reused_given_data"
+    }
+   ],
+   "explanation": "בכל עמודה ההפרש בין השורות הוא -10 ואז -11 (למשל עמודה 1: 2-12=-10, -9-2=-11). באותו אופן בעמודה 3: 3-13=-10, ולכן האיבר הבא: 3-11=-8.",
+   "reasoning_steps": [
+    "בדיקת ההפרשים בעמודה 1: 2-12=-10, -9-2=-11",
+    "אימות אותו דפוס בעמודה 2: -3-7=-10, -14-(-3)=-11",
+    "החלת אותו דפוס בעמודה 3: 3-13=-10 (מתאים), ולכן ההפרש הבא הוא -11: 3-11=-8"
+   ],
+   "explanation_complete": true,
+   "validation_stages": {
+    "structural_validation": true,
+    "logical_validation": true,
+    "logical_validation_status": "passed",
+    "content_quality_validation": true,
+    "difficulty_validation": true,
+    "approved": true
+   },
+   "rubric_score": {
+    "I": 3,
+    "H": 2,
+    "R": 3,
+    "D": 2,
+    "W": 3,
+    "total": 13,
+    "rubric_level": 5,
+    "note": "חוקיות הפרשים-של-הפרשים על פני עמודות מרובות - יש לגלות דפוס מדרגה שנייה"
+   },
+   "prerequisite_knowledge": [],
+   "formal_spec": {
+    "kind_group": "sequence",
+    "kind": "matrix_column_pattern",
+    "known_columns": [
+     [
+      12,
+      2,
+      -9
+     ],
+     [
+      7,
+      -3,
+      -14
+     ]
+    ],
+    "target_partial": [
+     13,
+     3
+    ],
+    "expected_next": -8
+   },
+   "logical_validation_detail": "predicted next=-8; expected=-8"
+  },
+  {
+   "id": "q_p076",
+   "category": "series",
+   "subcategory": "paired_pointer_rule",
+   "skills": [
+    "paired_pointer_rule",
+    "two_input_function"
+   ],
+   "difficulty": 4,
+   "prompt": "בתרשים, כל עיגול תחתון מקבל ערך על פי שני העיגולים העליונים המצביעים עליו, לפי כלל קבוע וזהה בכל המקרים:\nעליונים: 5, 3 ← תחתון: 13\nעליונים: 9, 4 ← תחתון: 22\nעליונים: 6, 7 ← תחתון: ?",
+   "options": [
+    {
+     "id": "a",
+     "text": "19",
+     "is_correct": true,
+     "distractor_type": null
+    },
+    {
+     "id": "b",
+     "text": "13",
+     "is_correct": false,
+     "distractor_type": "reused_given_data"
+    },
+    {
+     "id": "c",
+     "text": "25",
+     "is_correct": false,
+     "distractor_type": "miscalculation"
+    },
+    {
+     "id": "d",
+     "text": "17",
+     "is_correct": false,
+     "distractor_type": "miscalculation"
+    }
+   ],
+   "explanation": "הכלל הוא: תחתון = פי 2 מהעליון הראשון, ועוד העליון השני (2a+b). בדיקה: 2×5+3=13, 2×9+4=22. לכן: 2×6+7=19.",
+   "reasoning_steps": [
+    "חיפוש כלל שמתאים לשני המקרים הנתונים",
+    "אימות: 2×5+3=13, 2×9+4=22 - הכלל 2a+b מתאים לשניהם",
+    "החלת הכלל על המקרה החדש: 2×6+7=19"
+   ],
+   "validation_stages": {
+    "structural_validation": true,
+    "logical_validation": true,
+    "logical_validation_status": "passed",
+    "content_quality_validation": true,
+    "difficulty_validation": true,
+    "approved": true
+   },
+   "formal_spec": {
+    "kind_group": "sequence",
+    "kind": "paired_linear_function",
+    "known_pairs": [
+     [
+      5,
+      3,
+      13
+     ],
+     [
+      9,
+      4,
+      22
+     ]
+    ],
+    "query_pair": [
+     6,
+     7
+    ],
+    "expected_next": 19
+   },
+   "rubric_score": {
+    "I": 3,
+    "H": 3,
+    "R": 2,
+    "D": 2,
+    "W": 2,
+    "total": 12,
+    "rubric_level": 4,
+    "note": "גזירת כלל דו-משתני מתוך שתי דוגמאות בלבד - מספר היפותזות אמיתי (a+b? 2a+b? a*b?)"
+   },
+   "prerequisite_knowledge": [],
+   "logical_validation_detail": "predicted next=19; expected=19"
+  },
+  {
+   "id": "q_p084",
+   "category": "shapes_spatial",
+   "subcategory": "superposition",
+   "skills": [
+    "superposition",
+    "matrix_interaction",
+    "overlay_logic"
+   ],
+   "difficulty": 5,
+   "prompt": "בכל עמודה, התא התחתון מתקבל מחפיפה (סופרפוזיציה) של שני התאים העליונים לפי כלל קבוע וזהה. מצאו את התא החסר בעמודה השלישית.",
+   "visual_schema": {
+    "type": "superposition_matrix",
+    "quadrant_order": [
+     "top_left",
+     "top_right",
+     "bottom_left",
+     "bottom_right"
+    ],
+    "columns": [
+     {
+      "top1": [
+       1,
+       0,
+       1,
+       0
+      ],
+      "top2": [
+       0,
+       0,
+       1,
+       1
+      ],
+      "bottom": [
+       1,
+       0,
+       0,
+       1
+      ]
+     },
+     {
+      "top1": [
+       1,
+       1,
+       0,
+       0
+      ],
+      "top2": [
+       1,
+       0,
+       0,
+       1
+      ],
+      "bottom": [
+       0,
+       1,
+       0,
+       1
+      ]
+     },
+     {
+      "top1": [
+       0,
+       1,
+       1,
+       0
+      ],
+      "top2": [
+       1,
+       1,
+       0,
+       0
+      ],
+      "bottom": null
+     }
+    ],
+    "rule": "xor",
+    "options": {
+     "a": [
+      1,
+      0,
+      1,
+      0
+     ],
+     "b": [
+      0,
+      1,
+      0,
+      1
+     ],
+     "c": [
+      0,
+      1,
+      0,
+      0
+     ],
+     "d": [
+      1,
+      1,
+      1,
+      0
+     ]
+    }
+   },
+   "options": [
+    {
+     "id": "a",
+     "text": "רבע עליון-שמאלי ורבע תחתון-שמאלי מלאים בלבד",
+     "is_correct": true,
+     "distractor_type": null
+    },
+    {
+     "id": "b",
+     "text": "רבע עליון-ימני ורבע תחתון-ימני מלאים בלבד (ההפך המדויק מהתשובה הנכונה)",
+     "is_correct": false,
+     "distractor_type": "xor_sign_flip"
+    },
+    {
+     "id": "c",
+     "text": "רבע עליון-ימני מלא בלבד (כמו חיתוך AND בין שני התאים)",
+     "is_correct": false,
+     "distractor_type": "wrong_operation_and"
+    },
+    {
+     "id": "d",
+     "text": "שלושה רבעים מלאים, רק תחתון-ימני ריק (כמו איחוד OR בין שני התאים)",
+     "is_correct": false,
+     "distractor_type": "wrong_operation_or"
+    }
+   ],
+   "explanation": "הכלל הוא XOR בין הרביעים המקבילים: רביע מלא בתא התחתון אם ורק אם הוא מלא באחד מהתאים העליונים בדיוק (לא בשניהם ולא באף אחד).",
+   "reasoning_steps": [
+    "בדיקת עמודה 1: [1,0,1,0] XOR [0,0,1,1] = [1,0,0,1] - מתאים לתא הנתון",
+    "בדיקת עמודה 2: [1,1,0,0] XOR [1,0,0,1] = [0,1,0,1] - מתאים לתא הנתון",
+    "אימות שהכלל האחיד הוא XOR ולא AND/OR (שנותנים תוצאות שונות בעמודות 1-2)",
+    "החלה על עמודה 3: [0,1,1,0] XOR [1,1,0,0] = [1,0,1,0]"
+   ],
+   "formal_spec": {
+    "kind_group": "shape_schema",
+    "type": "superposition_matrix",
+    "quadrant_order": [
+     "top_left",
+     "top_right",
+     "bottom_left",
+     "bottom_right"
+    ],
+    "columns": [
+     {
+      "top1": [
+       1,
+       0,
+       1,
+       0
+      ],
+      "top2": [
+       0,
+       0,
+       1,
+       1
+      ],
+      "bottom": [
+       1,
+       0,
+       0,
+       1
+      ]
+     },
+     {
+      "top1": [
+       1,
+       1,
+       0,
+       0
+      ],
+      "top2": [
+       1,
+       0,
+       0,
+       1
+      ],
+      "bottom": [
+       0,
+       1,
+       0,
+       1
+      ]
+     },
+     {
+      "top1": [
+       0,
+       1,
+       1,
+       0
+      ],
+      "top2": [
+       1,
+       1,
+       0,
+       0
+      ],
+      "bottom": null
+     }
+    ],
+    "rule": "xor",
+    "options": {
+     "a": [
+      1,
+      0,
+      1,
+      0
+     ],
+     "b": [
+      0,
+      1,
+      0,
+      1
+     ],
+     "c": [
+      0,
+      1,
+      0,
+      0
+     ],
+     "d": [
+      1,
+      1,
+      1,
+      0
+     ]
+    }
+   },
+   "rubric_score": {
+    "I": 3,
+    "H": 3,
+    "R": 3,
+    "D": 3,
+    "W": 2,
+    "total": 14,
+    "rubric_level": 5,
+    "note": "יש לבחון בין מספר פעולות-חפיפה אפשריות (XOR/AND/OR) מול 2 עמודות נתונות בו-זמנית - עומס היפותזות ומבנה גבוה"
+   },
+   "prerequisite_knowledge": [],
+   "logical_validation_detail": "predicted XOR=[1, 0, 1, 0]; option a=[1, 0, 1, 0]",
+   "validation_stages": {
+    "structural_validation": true,
+    "logical_validation": true,
+    "logical_validation_status": "passed",
+    "content_quality_validation": true,
+    "difficulty_validation": true,
+    "approved": true
+   }
+  },
+  {
+   "id": "q_p088",
+   "category": "shapes_spatial",
+   "subcategory": "shape_matrix",
+   "skills": [
+    "shape_matrix",
+    "hidden_rule",
+    "prime_numbers"
+   ],
+   "difficulty": 5,
+   "prompt": "לפניכם מטריצה של צורות עם מספר איברים משתנה. בחרו את התשובה המתאימה להשלמת התא החסר.",
+   "options": [
+    {
+     "id": "a",
+     "text": "5 איברים, מלא",
+     "is_correct": true,
+     "distractor_type": null
+    },
+    {
+     "id": "b",
+     "text": "5 איברים, ריק",
+     "is_correct": false,
+     "distractor_type": "wrong_fill"
+    },
+    {
+     "id": "c",
+     "text": "4 איברים, מלא",
+     "is_correct": false,
+     "distractor_type": "wrong_count"
+    },
+    {
+     "id": "d",
+     "text": "4 איברים, ריק",
+     "is_correct": false,
+     "distractor_type": "wrong_count_and_fill"
+    }
+   ],
+   "explanation": "מספר האיברים בתא (3,3): 3+3-1=5. המספר 5 הוא ראשוני, ולכן התא מלא.",
+   "reasoning_steps": [
+    "חישוב מספר האיברים לתא (3,3): 3+3-1=5",
+    "בדיקת ראשוניות המספר 5: כן, ראשוני",
+    "לכן התא מלא, עם 5 איברים"
+   ],
+   "visual_schema": {
+    "type": "matrix3x3",
+    "cells": [
+     [
+      {
+       "count": 1,
+       "fill": "empty"
+      },
+      {
+       "count": 2,
+       "fill": "solid"
+      },
+      {
+       "count": 3,
+       "fill": "solid"
+      }
+     ],
+     [
+      {
+       "count": 2,
+       "fill": "solid"
+      },
+      {
+       "count": 3,
+       "fill": "solid"
+      },
+      {
+       "count": 4,
+       "fill": "empty"
+      }
+     ],
+     [
+      {
+       "count": 3,
+       "fill": "solid"
+      },
+      {
+       "count": 4,
+       "fill": "empty"
+      },
+      null
+     ]
+    ],
+    "missing_cell": [
+     2,
+     2
+    ],
+    "option_shapes": {
+     "a": {
+      "count": 5,
+      "fill": "solid"
+     },
+     "b": {
+      "count": 5,
+      "fill": "empty"
+     },
+     "c": {
+      "count": 4,
+      "fill": "solid"
+     },
+     "d": {
+      "count": 4,
+      "fill": "empty"
+     }
+    }
+   },
+   "internal_artist_note": "מטריצה 3x3 שבה כל תא מכיל מספר איברים זהים לפי הכלל: מספר איברים = (מספר שורה + מספר עמודה - 1); מילוי התא (מלא/ריק) תלוי אם המספר הזה ראשוני. (1,1)=1,לא-ראשוני,ריק;(1,2)=2,ראשוני,מלא;(1,3)=3,ראשוני,מלא;(2,1)=2,ראשוני,מלא;(2,2)=3,ראשוני,מלא;(2,3)=4,לא,ריק;(3,1)=3,ראשוני,מלא;(3,2)=4,לא,ריק;(3,3)=5,?",
+   "validation_stages": {
+    "structural_validation": true,
+    "logical_validation": true,
+    "logical_validation_status": "passed",
+    "content_quality_validation": true,
+    "difficulty_validation": true,
+    "approved": true
+   },
+   "rubric_score": {
+    "I": 3,
+    "H": 3,
+    "R": 3,
+    "D": 2,
+    "W": 2,
+    "total": 13,
+    "rubric_level": 5,
+    "note": "שני כללים נסתרים בו-זמנית (נוסחת מיקום + כלל מילוי) חייבים להתגלות במקביל מתוך מטריצה בלבד - זה מה שמצדיק רמה 5, לא העובדה שמדובר בראשוניים"
+   },
+   "prerequisite_knowledge": [
+    "basic_primality_check"
+   ],
+   "formal_spec": {
+    "kind_group": "shape_schema",
+    "type": "hidden_dual_rule_matrix",
+    "cells": {
+     "1,1": {
+      "count": 1,
+      "fill": "empty"
+     },
+     "1,2": {
+      "count": 2,
+      "fill": "solid"
+     },
+     "1,3": {
+      "count": 3,
+      "fill": "solid"
+     },
+     "2,1": {
+      "count": 2,
+      "fill": "solid"
+     },
+     "2,2": {
+      "count": 3,
+      "fill": "solid"
+     },
+     "2,3": {
+      "count": 4,
+      "fill": "empty"
+     },
+     "3,1": {
+      "count": 3,
+      "fill": "solid"
+     },
+     "3,2": {
+      "count": 4,
+      "fill": "empty"
+     }
+    },
+    "missing_cell": [
+     3,
+     3
+    ],
+    "options": {
+     "a": {
+      "count": 5,
+      "fill": "solid"
+     }
+    }
+   },
+   "logical_validation_detail": "predicted cell=(5,solid); option a={'count': 5, 'fill': 'solid'}"
+  },
+  {
+   "id": "q_p097",
+   "category": "shapes_spatial",
+   "subcategory": "mental_rotation",
+   "skills": [
+    "mental_rotation",
+    "3d_visualization"
+   ],
+   "difficulty": 4,
+   "prompt": "קובייה מסומנת מוצגת לפניכם. לאחר הסיבוב המתואר, היכן יימצא הסימון?",
+   "options": [
+    {
+     "id": "a",
+     "text": "הפאה השמאלית",
+     "is_correct": true,
+     "distractor_type": null
+    },
+    {
+     "id": "b",
+     "text": "הפאה הימנית",
+     "is_correct": false,
+     "distractor_type": "wrong_rotation_direction"
+    },
+    {
+     "id": "c",
+     "text": "הפאה האחורית",
+     "is_correct": false,
+     "distractor_type": "overshoots_to_180"
+    },
+    {
+     "id": "d",
+     "text": "הפאה העליונה",
+     "is_correct": false,
+     "distractor_type": "ignores_axis_constraint"
+    }
+   ],
+   "explanation": "סיבוב סביב הציר האנכי בכיוון נגד השעון (מבט מלמעלה) מזיז את הפאות הצדדיות במחזוריות: קדמית→שמאלית→אחורית→ימנית→קדמית. פאות עליונה/תחתונה אינן מושפעות מסיבוב סביב הציר האנכי.",
+   "reasoning_steps": [
+    "זיהוי ציר הסיבוב: אנכי - לכן פאות עליונה ותחתונה אינן זזות",
+    "מעקב אחר כיוון הסיבוב (נגד השעון, מבט מלמעלה): קדמית→שמאלית",
+    "מסקנה: הנקודה שהייתה בפאה הקדמית עוברת כעת לפאה השמאלית"
+   ],
+   "visual_schema": {
+    "type": "cube_rotation",
+    "initial_mark_face": "front",
+    "rotation_axis": "vertical",
+    "rotation_direction": "counterclockwise_from_top",
+    "rotation_degrees": 90,
+    "options": {
+     "a": "left",
+     "b": "right",
+     "c": "back",
+     "d": "top"
+    }
+   },
+   "internal_artist_note": "קובייה עם נקודה על הפאה הקדמית בלבד.",
+   "validation_stages": {
+    "structural_validation": true,
+    "logical_validation": true,
+    "logical_validation_status": "passed",
+    "content_quality_validation": true,
+    "difficulty_validation": true,
+    "approved": true
+   },
+   "formal_spec": {
+    "kind_group": "shape_schema",
+    "type": "cube_rotation",
+    "initial_mark_face": "front",
+    "rotation_axis": "vertical",
+    "rotation_direction": "counterclockwise_from_top",
+    "rotation_degrees": 90,
+    "options": {
+     "a": "left",
+     "b": "right",
+     "c": "back",
+     "d": "top"
+    }
+   },
+   "rubric_score": {
+    "I": 2,
+    "H": 2,
+    "R": 2,
+    "D": 3,
+    "W": 2,
+    "total": 11,
+    "rubric_level": 4,
+    "note": "בלבול כיוון/ציר סיבוב הוא מלכודת נפוצה ומשמעותית"
+   },
+   "prerequisite_knowledge": [],
+   "logical_validation_detail": "predicted face=left; option a=left"
+  },
+  {
+   "id": "q_p099",
+   "category": "shapes_spatial",
+   "subcategory": "paper_folding",
+   "skills": [
+    "paper_folding",
+    "hole_punching",
+    "symmetry",
+    "multi_fold"
+   ],
+   "difficulty": 4,
+   "prompt": "הפעם הדף מקופל פעמיים לפני הניקוב. כמה חורים יתקבלו כשפותחים את הדף לגמרי?",
+   "options": [
+    {
+     "id": "a",
+     "text": "4",
+     "is_correct": true,
+     "distractor_type": null
+    },
+    {
+     "id": "b",
+     "text": "2",
+     "is_correct": false,
+     "distractor_type": "accounts_for_only_one_fold"
+    },
+    {
+     "id": "c",
+     "text": "1",
+     "is_correct": false,
+     "distractor_type": "ignores_all_folds"
+    },
+    {
+     "id": "d",
+     "text": "8",
+     "is_correct": false,
+     "distractor_type": "overcounts_layers"
+    }
+   ],
+   "explanation": "שני קיפולים ניצבים יוצרים 4 שכבות נייר בפינה המשותפת; ניקוב שם עובר דרך כל 4 השכבות, ולכן בפתיחה יתקבלו 4 חורים.",
+   "reasoning_steps": [
+    "קיפול ראשון: 2 שכבות",
+    "קיפול שני (ניצב) על גבי הראשון: 2×2=4 שכבות בפינה המשותפת",
+    "ניקוב בפינה זו עובר דרך כל 4 השכבות",
+    "בפתיחת הדף: 4 חורים, מסודרים בסימטריה סביב מרכז הדף"
+   ],
+   "visual_schema": {
+    "type": "paper_fold",
+    "folds": 2,
+    "fold_orientations": [
+     "vertical_center",
+     "horizontal_center"
+    ],
+    "punch_location": "corner_where_folds_meet",
+    "options": {
+     "a": 4,
+     "b": 2,
+     "c": 1,
+     "d": 8
+    }
+   },
+   "internal_artist_note": "דף מקופל לשניים פעמיים: קיפול ראשון לשניים, ואז קיפול שני לשניים בכיוון ניצב לראשון. חור אחד מנוקב בפינה שבה נפגשים שני קווי הקיפול.",
+   "validation_stages": {
+    "structural_validation": true,
+    "logical_validation": true,
+    "logical_validation_status": "passed",
+    "content_quality_validation": true,
+    "difficulty_validation": true,
+    "approved": true
+   },
+   "rubric_score": {
+    "I": 2,
+    "H": 2,
+    "R": 3,
+    "D": 2,
+    "W": 2,
+    "total": 11,
+    "rubric_level": 4,
+    "note": "שני קיפולים ניצבים - יש להבין הכפלת שכבות (2x2) ולא רק תוספת"
+   },
+   "prerequisite_knowledge": [],
+   "formal_spec": {
+    "kind_group": "shape_schema",
+    "type": "paper_fold",
+    "folds": 2,
+    "options": {
+     "a": 4
+    }
+   },
+   "logical_validation_detail": "2^folds=4 holes; option a=4"
+  },
+  {
+   "id": "q_gold_l1",
+   "category": "logic",
+   "subcategory": "categorical_syllogism",
+   "skills": [
+    "deductive_reasoning",
+    "contrapositive_chaining",
+    "irrelevant_premise_filtering"
+   ],
+   "difficulty": 5,
+   "prompt": "כל חברי הוועדה הם רואי חשבון. אף רואה חשבון אינו עורך דין. חלק מעורכי הדין הם גם רואי מס. דנה היא עורכת דין. מה נובע בהכרח על דנה?",
+   "options": [
+    {
+     "id": "a",
+     "text": "דנה אינה חברה בוועדה",
+     "is_correct": true,
+     "distractor_type": null
+    },
+    {
+     "id": "b",
+     "text": "דנה היא רואת חשבון",
+     "is_correct": false,
+     "distractor_type": "contradicts_derivation"
+    },
+    {
+     "id": "c",
+     "text": "דנה היא רואת מס",
+     "is_correct": false,
+     "distractor_type": "misuse_of_irrelevant_premise"
+    },
+    {
+     "id": "d",
+     "text": "אי אפשר לדעת אם דנה חברה בוועדה",
+     "is_correct": false,
+     "distractor_type": "false_uncertainty"
+    }
+   ],
+   "explanation": "מהיותה עורכת דין, ומכיוון שאף רואה חשבון אינו עורך דין, נובע שדנה אינה רואת חשבון (קונטרפוזיציה). ומכיוון שכל חברי הוועדה הם רואי חשבון, אם דנה הייתה חברה בוועדה היא הייתה חייבת להיות רואת חשבון - סתירה. לכן דנה אינה חברה בוועדה. הנתון על רואי המס אינו רלוונטי לדנה במיוחד ויש להתעלם ממנו.",
+   "reasoning_steps": [
+    "דנה עורכת דין (נתון)",
+    "אף רואה חשבון אינו עורך דין - לכן דנה אינה רואת חשבון (קונטרפוזיציה)",
+    "כל חברי הוועדה הם רואי חשבון - לכן מי שאינו רואה חשבון אינו חבר בוועדה",
+    "מכאן: דנה אינה חברה בוועדה",
+    "הנתון על 'חלק מעורכי הדין הם רואי מס' אינו נוגע לדנה במיוחד - יש לפסול אותו כלא-רלוונטי"
+   ],
+   "formal_spec": {
+    "kind_group": "propositional_chain",
+    "rules": [
+     {
+      "if": "COMMITTEE",
+      "if_val": true,
+      "then": "ACCOUNTANT",
+      "then_val": true
+     },
+     {
+      "if": "ACCOUNTANT",
+      "if_val": true,
+      "then": "LAWYER",
+      "then_val": false
+     }
+    ],
+    "given_facts": {
+     "LAWYER": true
+    },
+    "query": "COMMITTEE",
+    "expected_result": "false"
+   },
+   "rubric_score": {
+    "I": 3,
+    "H": 3,
+    "R": 3,
+    "D": 2,
+    "W": 2,
+    "total": 13,
+    "rubric_level": 5,
+    "note": "שרשור קונטרפוזיציה כפול + נתון-מסיח (רואי מס) שיש לזהות כלא-רלוונטי ולפסול"
+   },
+   "prerequisite_knowledge": [],
+   "logical_validation_detail": "closure derived query='COMMITTEE' as false (expected false); full closure={'LAWYER': True, 'ACCOUNTANT': False, 'COMMITTEE': False}",
+   "validation_stages": {
+    "structural_validation": true,
+    "logical_validation": true,
+    "logical_validation_status": "passed",
+    "content_quality_validation": true,
+    "difficulty_validation": true,
+    "approved": true
+   }
+  },
+  {
+   "id": "q_gold_l2",
+   "category": "logic",
+   "subcategory": "set_relations",
+   "skills": [
+    "constraint_satisfaction",
+    "conditional_constraint",
+    "domain_assignment"
+   ],
+   "difficulty": 4,
+   "prompt": "4 עובדים - א, ב, ג, ד - משובצים לאחד משני חדרים (1 או 2). ידוע: א וב אינם באותו חדר. ג ו-ד כן באותו חדר. אם א נמצא בחדר 1, אז ג נמצא בחדר 2. א נמצא בחדר 1. באיזה חדר נמצא ד?",
+   "options": [
+    {
+     "id": "a",
+     "text": "חדר 2",
+     "is_correct": true,
+     "distractor_type": null
+    },
+    {
+     "id": "b",
+     "text": "חדר 1",
+     "is_correct": false,
+     "distractor_type": "ignores_conditional_constraint"
+    },
+    {
+     "id": "c",
+     "text": "אי אפשר לדעת",
+     "is_correct": false,
+     "distractor_type": "false_uncertainty"
+    },
+    {
+     "id": "d",
+     "text": "אותו חדר כמו א",
+     "is_correct": false,
+     "distractor_type": "confuses_ab_relation_with_cd"
+    }
+   ],
+   "explanation": "מכיוון שא בחדר 1, מופעל התנאי 'אם א בחדר 1 אז ג בחדר 2' - לכן ג בחדר 2. ומכיוון שג ו-ד תמיד באותו חדר, גם ד בחדר 2.",
+   "reasoning_steps": [
+    "א בחדר 1 (נתון)",
+    "התנאי 'אם א ב-1 אז ג ב-2' מופעל - ג בחדר 2",
+    "ג ו-ד תמיד באותו חדר - לכן ד בחדר 2 גם כן",
+    "(הנתון על א וב לא באותו חדר קובע רק את ב=חדר 2, ולא משפיע ישירות על ד)"
+   ],
+   "formal_spec": {
+    "kind_group": "domain_csp",
+    "entities": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "domain": [
+     1,
+     2
+    ],
+    "constraints": [
+     {
+      "type": "eq",
+      "entity": "A",
+      "val": 1
+     },
+     {
+      "type": "not_eq_entities",
+      "a": "A",
+      "b": "B"
+     },
+     {
+      "type": "eq_entities",
+      "a": "C",
+      "b": "D"
+     },
+     {
+      "type": "conditional_eq",
+      "if_entity": "A",
+      "if_val": 1,
+      "then_entity": "C",
+      "then_val": 2
+     }
+    ],
+    "expected_assignment": {
+     "D": 2
+    }
+   },
+   "rubric_score": {
+    "I": 2,
+    "H": 2,
+    "R": 3,
+    "D": 2,
+    "W": 2,
+    "total": 11,
+    "rubric_level": 4,
+    "note": "שילוב שלושה סוגי אילוצים שונים בו-זמנית (אי-שוויון, שוויון, תנאי מותנה) על תחום משותף"
+   },
+   "prerequisite_knowledge": [],
+   "logical_validation_detail": "unique solution={'A': 1, 'B': 2, 'C': 2, 'D': 2}; expected(partial)={'D': 2}",
+   "validation_stages": {
+    "structural_validation": true,
+    "logical_validation": true,
+    "logical_validation_status": "passed",
+    "content_quality_validation": true,
+    "difficulty_validation": true,
+    "approved": true
+   }
+  },
+  {
+   "id": "q_gold_a1",
+   "category": "analogies",
+   "subcategory": "pair_verification",
+   "skills": [
+    "relation_consistency",
+    "precise_relation_type"
+   ],
+   "difficulty": 4,
+   "prompt": "לפניכם זוג מילים: מנתח : ניתוח. באיזה מהזוגות הבאים מתקיים אותו סוג יחס?",
+   "options": [
+    {
+     "id": "a",
+     "text": "מורה : הוראה",
+     "is_correct": true,
+     "distractor_type": null
+    },
+    {
+     "id": "b",
+     "text": "רופא : מרפאה",
+     "is_correct": false,
+     "distractor_type": "person_to_workplace_not_action"
+    },
+    {
+     "id": "c",
+     "text": "נהג : מכונית",
+     "is_correct": false,
+     "distractor_type": "person_to_tool_not_action"
+    },
+    {
+     "id": "d",
+     "text": "שוטר : חוק",
+     "is_correct": false,
+     "distractor_type": "person_to_abstract_domain_not_action"
+    }
+   ],
+   "explanation": "היחס המדויק הוא איש-מקצוע↔הפעולה האופיינית שהוא מבצע (לא מקום, לא כלי, לא תחום מופשט). 'מורה:הוראה' הוא הזוג היחיד ששומר בדיוק על אותו סוג יחס.",
+   "reasoning_steps": [
+    "הגדרת סוג היחס המדויק בזוג הנתון: איש מקצוע -> הפעולה האופיינית לו",
+    "בדיקת כל אופציה מול ההגדרה המדויקת: רופא:מרפאה=מקום (נפסל), נהג:מכונית=כלי (נפסל), שוטר:חוק=תחום מופשט (נפסל)",
+    "מורה:הוראה מקיים בדיוק את אותו יחס: איש מקצוע -> הפעולה האופיינית"
+   ],
+   "formal_spec": {
+    "kind_group": "relation_consistency",
+    "stem_relation": "professional_to_characteristic_action",
+    "option_relations": {
+     "a": "professional_to_characteristic_action",
+     "b": "professional_to_workplace",
+     "c": "professional_to_tool",
+     "d": "professional_to_abstract_domain"
+    }
+   },
+   "rubric_score": {
+    "I": 2,
+    "H": 3,
+    "R": 2,
+    "D": 2,
+    "W": 2,
+    "total": 11,
+    "rubric_level": 4,
+    "note": "פורמט אימות-זוגות: יש לבדוק 4 היפותזות יחס מלאות, לא רק להשלים מילה אחת"
+   },
+   "prerequisite_knowledge": [],
+   "logical_validation_detail": "stem_relation='professional_to_characteristic_action'; options tagged same relation: ['a'] (need exactly ['a'])",
+   "validation_stages": {
+    "structural_validation": true,
+    "logical_validation": true,
+    "logical_validation_status": "passed",
+    "content_quality_validation": true,
+    "difficulty_validation": true,
+    "approved": true
+   }
+  },
+  {
+   "id": "q_gold_a2",
+   "category": "analogies",
+   "subcategory": "pair_verification",
+   "skills": [
+    "relation_consistency",
+    "cause_effect",
+    "precise_relation_type"
+   ],
+   "difficulty": 4,
+   "prompt": "בין המילים 'פחד' ו'רעד' מתקיים יחס מסוים. באיזה מהזוגות הבאים מתקיים אותו יחס בדיוק?",
+   "options": [
+    {
+     "id": "a",
+     "text": "מבוכה : הסמקה",
+     "is_correct": true,
+     "distractor_type": null
+    },
+    {
+     "id": "b",
+     "text": "משטרה : חוק",
+     "is_correct": false,
+     "distractor_type": "institution_to_domain"
+    },
+    {
+     "id": "c",
+     "text": "מורה : תלמיד",
+     "is_correct": false,
+     "distractor_type": "role_to_counterpart_role"
+    },
+    {
+     "id": "d",
+     "text": "אש : עשן",
+     "is_correct": false,
+     "distractor_type": "physical_cause_not_emotion"
+    }
+   ],
+   "explanation": "היחס המדויק הוא רגש↔הסימן הגופני הבלתי-רצוני האופייני לו. 'אש:עשן' חולק מבנה דומה (סיבה->תוצאה נראית) אך הסיבה אינה רגש - זו מלכודת המחקה את המבנה הכללי בלי לקיים את ההגבלה המדויקת (רגש).",
+   "reasoning_steps": [
+    "הגדרת היחס המדויק: רגש (ולא כל סיבה) -> סימן גופני בלתי-רצוני",
+    "פסילת אש:עשן - אותו מבנה כללי (סיבה->תוצאה נראית) אך לא רגש, לכן לא אותו יחס מדויק",
+    "פסילת משטרה:חוק ומורה:תלמיד - סוגי יחס שונים לגמרי",
+    "מבוכה:הסמקה מקיים בדיוק: רגש -> סימן גופני בלתי-רצוני"
+   ],
+   "formal_spec": {
+    "kind_group": "relation_consistency",
+    "stem_relation": "emotion_to_involuntary_physical_sign",
+    "option_relations": {
+     "a": "emotion_to_involuntary_physical_sign",
+     "b": "institution_to_domain",
+     "c": "role_to_counterpart_role",
+     "d": "physical_cause_to_visible_effect_not_emotion"
+    }
+   },
+   "rubric_score": {
+    "I": 2,
+    "H": 3,
+    "R": 2,
+    "D": 3,
+    "W": 2,
+    "total": 12,
+    "rubric_level": 4,
+    "note": "מסיח ד' חולק מבנה שטחי זהה (סיבה-תוצאה) אך שובר את ההגבלה הסמנטית המדויקת (רגש) - מלכודת חזקה"
+   },
+   "prerequisite_knowledge": [],
+   "logical_validation_detail": "stem_relation='emotion_to_involuntary_physical_sign'; options tagged same relation: ['a'] (need exactly ['a'])",
+   "validation_stages": {
+    "structural_validation": true,
+    "logical_validation": true,
+    "logical_validation_status": "passed",
+    "content_quality_validation": true,
+    "difficulty_validation": true,
+    "approved": true
+   }
+  },
+  {
+   "id": "q_gold_a3",
+   "category": "analogies",
+   "subcategory": "pair_verification",
+   "skills": [
+    "relation_consistency",
+    "functional_matching_mechanism"
+   ],
+   "difficulty": 5,
+   "prompt": "היחס בין 'מפתח' ל'מנעול' חוזר על עצמו באחד מהזוגות הבאים בלבד. מצאו אותו.",
+   "options": [
+    {
+     "id": "a",
+     "text": "קוד : כספת",
+     "is_correct": true,
+     "distractor_type": null
+    },
+    {
+     "id": "b",
+     "text": "פטיש : מסמר",
+     "is_correct": false,
+     "distractor_type": "tool_acts_on_target_not_unlocking_pair"
+    },
+    {
+     "id": "c",
+     "text": "מטרייה : גשם",
+     "is_correct": false,
+     "distractor_type": "protection_from_not_matching_mechanism"
+    },
+    {
+     "id": "d",
+     "text": "כרטיס : מכונה",
+     "is_correct": false,
+     "distractor_type": "vague_activation_not_unique_match"
+    }
+   ],
+   "explanation": "היחס המדויק הוא אמצעי-פתיחה ייחודי↔המכשיר התואם שהוא פותח (התאמה ייחודית, לא סתם 'פעולה על'). 'קוד:כספת' הוא הזוג היחיד שבו קוד ספציפי פותח כספת ספציפית באופן תואם.",
+   "reasoning_steps": [
+    "הגדרת היחס המדויק: אמצעי-פתיחה ייעודי -> המכשיר התואם לו בדיוק",
+    "פטיש:מסמר הוא 'כלי הפועל על מטרה' - יחס שונה (אין 'פתיחה' או 'התאמה ייחודית')",
+    "מטרייה:גשם הוא 'הגנה מפני' - יחס שונה לגמרי",
+    "כרטיס:מכונה הוא 'הפעלה' כללית, לאו דווקא התאמה ייחודית של פתיחה",
+    "קוד:כספת מקיים בדיוק: אמצעי ייחודי -> מנגנון נעילה תואם"
+   ],
+   "formal_spec": {
+    "kind_group": "relation_consistency",
+    "stem_relation": "unique_unlocking_mechanism_match",
+    "option_relations": {
+     "a": "unique_unlocking_mechanism_match",
+     "b": "tool_acts_on_target",
+     "c": "protection_from",
+     "d": "vague_activation"
+    }
+   },
+   "rubric_score": {
+    "I": 2,
+    "H": 3,
+    "R": 3,
+    "D": 3,
+    "W": 2,
+    "total": 13,
+    "rubric_level": 5,
+    "note": "היחס עצמו עדין להגדרה (התאמה ייחודית לפתיחה, לא סתם 'פועל על' או 'מפעיל') - מסיחים קרובים במיוחד"
+   },
+   "prerequisite_knowledge": [],
+   "logical_validation_detail": "stem_relation='unique_unlocking_mechanism_match'; options tagged same relation: ['a'] (need exactly ['a'])",
+   "validation_stages": {
+    "structural_validation": true,
+    "logical_validation": true,
+    "logical_validation_status": "passed",
+    "content_quality_validation": true,
+    "difficulty_validation": true,
+    "approved": true
+   }
+  },
+  {
+   "id": "q_gold_a4",
+   "category": "analogies",
+   "subcategory": "pair_verification",
+   "skills": [
+    "relation_consistency",
+    "developmental_stage"
+   ],
+   "difficulty": 4,
+   "prompt": "זהו את הזוג שבו מתקיים אותו יחס כמו בין 'זרע' ל'עץ'.",
+   "options": [
+    {
+     "id": "a",
+     "text": "ביצה : ציפור",
+     "is_correct": true,
+     "distractor_type": null
+    },
+    {
+     "id": "b",
+     "text": "ענף : עלה",
+     "is_correct": false,
+     "distractor_type": "part_whole_not_developmental"
+    },
+    {
+     "id": "c",
+     "text": "פרח : דבש",
+     "is_correct": false,
+     "distractor_type": "produces_different_product_not_same_identity"
+    },
+    {
+     "id": "d",
+     "text": "אבן : הר",
+     "is_correct": false,
+     "distractor_type": "part_of_aggregate_not_developmental"
+    }
+   ],
+   "explanation": "היחס המדויק הוא צורה מוקדמת-פוטנציאלית↔הצורה הבוגרת-ממומשת של אותה ישות עצמה (לא חלק-שלם, ולא תוצר שונה). 'ביצה:ציפור' הוא הזוג היחיד עם אותה ישות עוברת התפתחות.",
+   "reasoning_steps": [
+    "הגדרת היחס המדויק: אותה ישות, שלב מוקדם -> שלב בוגר (לא חלק-שלם, לא יצירת-תוצר-אחר)",
+    "ענף:עלה הוא חלק-שלם של דבר בוגר קיים, לא שלב התפתחותי",
+    "פרח:דבש - הפרח לא הופך לדבש (יש תיווך של דבורים), זהו יצור-תוצר לא זהות מתפתחת",
+    "אבן:הר הוא יחס צבירה (חלק מתוך אוסף), לא התפתחות של אותה ישות",
+    "ביצה:ציפור: אותה ציפור עצמה, בשלב מוקדם לעומת בוגר"
+   ],
+   "formal_spec": {
+    "kind_group": "relation_consistency",
+    "stem_relation": "immature_form_to_mature_form_same_entity",
+    "option_relations": {
+     "a": "immature_form_to_mature_form_same_entity",
+     "b": "part_whole",
+     "c": "produces_different_product",
+     "d": "part_of_aggregate"
+    }
+   },
+   "rubric_score": {
+    "I": 2,
+    "H": 3,
+    "R": 2,
+    "D": 2,
+    "W": 2,
+    "total": 11,
+    "rubric_level": 4,
+    "note": "יחס התפתחותי מדויק (אותה ישות) לעומת חלק-שלם/תוצר-שונה/צבירה - שלוש קטגוריות מסיחים שונות"
+   },
+   "prerequisite_knowledge": [],
+   "logical_validation_detail": "stem_relation='immature_form_to_mature_form_same_entity'; options tagged same relation: ['a'] (need exactly ['a'])",
+   "validation_stages": {
+    "structural_validation": true,
+    "logical_validation": true,
+    "logical_validation_status": "passed",
+    "content_quality_validation": true,
+    "difficulty_validation": true,
+    "approved": true
+   }
+  },
+  {
+   "id": "q_gold_q1",
+   "category": "quantitative",
+   "subcategory": "percentages",
+   "skills": [
+    "fraction_of_subgroup",
+    "choosing_correct_base"
+   ],
+   "difficulty": 4,
+   "prompt": "בכיתה 32 תלמידים. 3/4 מהתלמידים משתתפים בחוג ריקוד. מבין המשתתפים בחוג הריקוד, 5/6 הופיעו בהצגה. כמה תלמידים מהכיתה הופיעו בהצגה?",
+   "options": [
+    {
+     "id": "a",
+     "text": "20",
+     "is_correct": true,
+     "distractor_type": null
+    },
+    {
+     "id": "b",
+     "text": "27",
+     "is_correct": false,
+     "distractor_type": "applied_fraction_to_wrong_base"
+    },
+    {
+     "id": "c",
+     "text": "24",
+     "is_correct": false,
+     "distractor_type": "intermediate_value_only"
+    },
+    {
+     "id": "d",
+     "text": "18",
+     "is_correct": false,
+     "distractor_type": "miscalculation"
+    }
+   ],
+   "explanation": "יש לזהות שה-5/6 חל על קבוצת המשתתפים בריקוד (24), לא על כלל הכיתה (32). 3/4×32=24 (חוג ריקוד); 5/6×24=20 (הופיעו בהצגה).",
+   "reasoning_steps": [
+    "חישוב חוג הריקוד: 3/4×32=24",
+    "זיהוי הבסיס הנכון להפעלת השבר הבא: 5/6 חל על 24 (משתתפי הריקוד), לא על 32",
+    "חישוב: 5/6×24=20"
+   ],
+   "formal_spec": {
+    "kind_group": "arithmetic",
+    "params": {
+     "total": 32
+    },
+    "expression": "(3/4*total)*(5/6)",
+    "expected": 20
+   },
+   "rubric_score": {
+    "I": 3,
+    "H": 2,
+    "R": 2,
+    "D": 2,
+    "W": 2,
+    "total": 11,
+    "rubric_level": 4,
+    "note": "נקודת ההכרעה האמיתית: על איזה בסיס מפעילים את השבר השני - טעות נפוצה ביישום 5/6 על 32 במקום על 24"
+   },
+   "prerequisite_knowledge": [],
+   "logical_validation_detail": "recomputed (3/4*total)*(5/6) = 20.0; expected 20",
+   "validation_stages": {
+    "structural_validation": true,
+    "logical_validation": true,
+    "logical_validation_status": "passed",
+    "content_quality_validation": true,
+    "difficulty_validation": true,
+    "approved": true
+   }
+  },
+  {
+   "id": "q_gold_q2",
+   "category": "quantitative",
+   "subcategory": "percentages",
+   "skills": [
+    "rate_derivation",
+    "combined_rates"
+   ],
+   "difficulty": 4,
+   "prompt": "מכונה א' מייצרת 60 חלקים בשעה. מכונה ב' איטית ב-25% ממכונה א'. שתי המכונות עבדו יחד 3 שעות. כמה חלקים יוצרו בסך הכל?",
+   "options": [
+    {
+     "id": "a",
+     "text": "315",
+     "is_correct": true,
+     "distractor_type": null
+    },
+    {
+     "id": "b",
+     "text": "300",
+     "is_correct": false,
+     "distractor_type": "ignored_machine_b_slowdown"
+    },
+    {
+     "id": "c",
+     "text": "270",
+     "is_correct": false,
+     "distractor_type": "miscalculated_b_rate"
+    },
+    {
+     "id": "d",
+     "text": "180",
+     "is_correct": false,
+     "distractor_type": "used_only_machine_a"
+    }
+   ],
+   "explanation": "מכונה ב' איטית ב-25% פירושו קצב של 75% ממכונה א': 60×0.75=45. הקצב המשולב: 60+45=105 לשעה. ב-3 שעות: 105×3=315.",
+   "reasoning_steps": [
+    "חישוב קצב מכונה ב' מ'איטית ב-25%': 60×0.75=45 (לא 60-25=35!)",
+    "חישוב הקצב המשולב: 60+45=105 לשעה",
+    "הכפלה בזמן: 105×3=315"
+   ],
+   "formal_spec": {
+    "kind_group": "arithmetic",
+    "params": {
+     "rateA": 60,
+     "hours": 3
+    },
+    "expression": "(rateA + rateA*0.75)*hours",
+    "expected": 315
+   },
+   "rubric_score": {
+    "I": 3,
+    "H": 2,
+    "R": 2,
+    "D": 2,
+    "W": 2,
+    "total": 11,
+    "rubric_level": 4,
+    "note": "'איטית ב-25%' דורש הכפלה ב-0.75, לא חיסור ישיר של 25 - טעות פרשנות נפוצה"
+   },
+   "prerequisite_knowledge": [],
+   "logical_validation_detail": "recomputed (rateA + rateA*0.75)*hours = 315.0; expected 315",
+   "validation_stages": {
+    "structural_validation": true,
+    "logical_validation": true,
+    "logical_validation_status": "passed",
+    "content_quality_validation": true,
+    "difficulty_validation": true,
+    "approved": true
+   }
+  },
+  {
+   "id": "q_gold_q3",
+   "category": "quantitative",
+   "subcategory": "equations",
+   "skills": [
+    "three_variable_linear_system",
+    "solving_for_derived_not_primary_variable"
+   ],
+   "difficulty": 5,
+   "prompt": "לשלושה חברים - עידו, נועה ותום - יש יחד 180 ש\"ח. לעידו יש כפול מנועה. לתום יש 20 ש\"ח פחות מעידו. כמה כסף יש לתום?",
+   "options": [
+    {
+     "id": "a",
+     "text": "60",
+     "is_correct": true,
+     "distractor_type": null
+    },
+    {
+     "id": "b",
+     "text": "40",
+     "is_correct": false,
+     "distractor_type": "reported_noa_value_not_tom"
+    },
+    {
+     "id": "c",
+     "text": "80",
+     "is_correct": false,
+     "distractor_type": "reported_ido_value_not_tom"
+    },
+    {
+     "id": "d",
+     "text": "70",
+     "is_correct": false,
+     "distractor_type": "miscalculation"
+    }
+   ],
+   "explanation": "נועה=x, עידו=2x, תום=2x-20. יחד: x+2x+(2x-20)=180 → 5x=200 → x=40. תום=2×40-20=60. שימו לב: השאלה שואלת על תום, לא על נועה (40) או עידו (80).",
+   "reasoning_steps": [
+    "הגדרת משתנים: נועה=x, עידו=2x, תום=2x-20",
+    "בניית משוואה: x+2x+2x-20=180",
+    "פתרון: 5x=200 → x=40 (זהו הכסף של נועה, לא התשובה הסופית!)",
+    "חישוב תום (המבוקש): 2×40-20=60"
+   ],
+   "formal_spec": {
+    "kind_group": "arithmetic",
+    "params": {
+     "total": 180
+    },
+    "expression": "2*((total+20)/5)-20",
+    "expected": 60
+   },
+   "rubric_score": {
+    "I": 3,
+    "H": 2,
+    "R": 3,
+    "D": 3,
+    "W": 3,
+    "total": 14,
+    "rubric_level": 5,
+    "note": "מלכודת קלאסית: פתרון נכון של x (=40, נועה) הוא בעצמו מסיח מפתה אך אינו עונה על השאלה שנשאלה (תום)"
+   },
+   "prerequisite_knowledge": [],
+   "logical_validation_detail": "recomputed 2*((total+20)/5)-20 = 60.0; expected 60",
+   "validation_stages": {
+    "structural_validation": true,
+    "logical_validation": true,
+    "logical_validation_status": "passed",
+    "content_quality_validation": true,
+    "difficulty_validation": true,
+    "approved": true
+   }
+  },
+  {
+   "id": "q_gold_s1",
+   "category": "series",
+   "subcategory": "interleaved_sequence",
+   "skills": [
+    "interleaved_sequence",
+    "hypothesis_rejection"
+   ],
+   "difficulty": 4,
+   "prompt": "7, 20, 9, 17, 11, 14, 13, ?",
+   "options": [
+    {
+     "id": "a",
+     "text": "11",
+     "is_correct": true,
+     "distractor_type": null
+    },
+    {
+     "id": "b",
+     "text": "15",
+     "is_correct": false,
+     "distractor_type": "treats_as_single_sequence"
+    },
+    {
+     "id": "c",
+     "text": "16",
+     "is_correct": false,
+     "distractor_type": "treats_as_single_sequence"
+    },
+    {
+     "id": "d",
+     "text": "9",
+     "is_correct": false,
+     "distractor_type": "wrong_subsequence_applied"
+    }
+   ],
+   "explanation": "ניסיון למצוא הפרש קבוע ברצף כפי שהוא נתון נכשל (ההפרשים אינם עקביים). יש לזהות שמדובר בשני רצפים שלובים: מקומות אי-זוגיים 7,9,11,13 (+2), ומקומות זוגיים 20,17,14,? (-3). האיבר הבא (מקום שמיני, זוגי) הוא 14-3=11.",
+   "reasoning_steps": [
+    "ניסיון ראשוני: הפרשים ישירים ברצף המלא (13,-11,8,-6,3,-1) - לא עקבי, הכלל הפשוט נכשל",
+    "זיהוי שהרצף בנוי משני רצפים שלובים לפי מקום אי-זוגי/זוגי",
+    "רצף אי-זוגי: 7,9,11,13 (הפרש +2 קבוע)",
+    "רצף זוגי: 20,17,14,? (הפרש -3 קבוע) - האיבר הבא: 14-3=11"
+   ],
+   "formal_spec": {
+    "kind_group": "sequence",
+    "kind": "interleaved",
+    "known_terms": [
+     7,
+     20,
+     9,
+     17,
+     11,
+     14,
+     13
+    ],
+    "expected_next": 11
+   },
+   "rubric_score": {
+    "I": 3,
+    "H": 3,
+    "R": 2,
+    "D": 2,
+    "W": 2,
+    "total": 12,
+    "rubric_level": 4,
+    "note": "דורש דחיית השערת-הפרש-ישיר הכושלת ומעבר להשערת שילוב שני רצפים - תהליך פסילת-השערה אמיתי"
+   },
+   "prerequisite_knowledge": [],
+   "logical_validation_detail": "predicted next=11; expected=11",
+   "validation_stages": {
+    "structural_validation": true,
+    "logical_validation": true,
+    "logical_validation_status": "passed",
+    "content_quality_validation": true,
+    "difficulty_validation": true,
+    "approved": true
+   }
+  },
+  {
+   "id": "q_gold_s2",
+   "category": "series",
+   "subcategory": "paired_pointer_rule",
+   "skills": [
+    "hypothesis_search",
+    "function_derivation"
+   ],
+   "difficulty": 4,
+   "prompt": "בכל תא, הערך מתקבל מפעולה קבועה על שני המספרים שמעליו: עליונים 3,4 -> תחתון 11 . עליונים 2,5 -> תחתון 9 . עליונים 4,6 -> תחתון ?",
+   "options": [
+    {
+     "id": "a",
+     "text": "23",
+     "is_correct": true,
+     "distractor_type": null
+    },
+    {
+     "id": "b",
+     "text": "10",
+     "is_correct": false,
+     "distractor_type": "wrong_hypothesis_sum"
+    },
+    {
+     "id": "c",
+     "text": "24",
+     "is_correct": false,
+     "distractor_type": "forgot_minus_one"
+    },
+    {
+     "id": "d",
+     "text": "25",
+     "is_correct": false,
+     "distractor_type": "wrong_hypothesis_sum_plus_one"
+    }
+   ],
+   "explanation": "השערת סכום (3+4=7) נכשלת מול התוצאה 11. השערת מכפלה (3×4=12) קרובה אך לא מדויקת. הכלל המתאים לשני המקרים הוא מכפלה פחות 1: 3×4-1=11, 2×5-1=9. עבור 4,6: 4×6-1=23.",
+   "reasoning_steps": [
+    "בדיקת השערת סכום: 3+4=7≠11 - נפסלת",
+    "בדיקת השערת מכפלה: 3×4=12≠11 - קרובה אך לא מדויקת",
+    "בדיקת מכפלה-פחות-1: 3×4-1=11 ✓ , 2×5-1=9 ✓ - הכלל מאומת על שני המקרים",
+    "החלה על התא החדש: 4×6-1=23"
+   ],
+   "formal_spec": {
+    "kind_group": "sequence",
+    "kind": "paired_function_search",
+    "known_pairs": [
+     [
+      3,
+      4,
+      11
+     ],
+     [
+      2,
+      5,
+      9
+     ]
+    ],
+    "query_pair": [
+     4,
+     6
+    ],
+    "expected_next": 23
+   },
+   "rubric_score": {
+    "I": 3,
+    "H": 3,
+    "R": 2,
+    "D": 2,
+    "W": 2,
+    "total": 12,
+    "rubric_level": 4,
+    "note": "חיפוש היפותזה אמיתי מתוך בנק פעולות מועמדות, שנבדקות נגד שני המקרים הידועים בו-זמנית"
+   },
+   "prerequisite_knowledge": [],
+   "logical_validation_detail": "predicted next=23; expected=23",
+   "validation_stages": {
+    "structural_validation": true,
+    "logical_validation": true,
+    "logical_validation_status": "passed",
+    "content_quality_validation": true,
+    "difficulty_validation": true,
+    "approved": true
+   }
+  },
+  {
+   "id": "q_gold_s3",
+   "category": "series",
+   "subcategory": "non_linear_pattern",
+   "skills": [
+    "decoy_pattern_rejection",
+    "second_order_difference"
+   ],
+   "difficulty": 4,
+   "prompt": "2, 4, 8, 14, 22, ?",
+   "options": [
+    {
+     "id": "a",
+     "text": "32",
+     "is_correct": true,
+     "distractor_type": null
+    },
+    {
+     "id": "b",
+     "text": "28",
+     "is_correct": false,
+     "distractor_type": "followed_decoy_doubling_pattern"
+    },
+    {
+     "id": "c",
+     "text": "30",
+     "is_correct": false,
+     "distractor_type": "miscalculation"
+    },
+    {
+     "id": "d",
+     "text": "44",
+     "is_correct": false,
+     "distractor_type": "continued_doubling_from_22"
+    }
+   ],
+   "explanation": "שלושת האיברים הראשונים (2,4,8) עשויים להיראות ככפל פי 2, אך 8→14 שובר את ההשערה הזו (14≠16). ההפרשים בפועל הם 2,4,6,8 - עולים באופן קבוע ב-2. ההפרש הבא הוא 10: 22+10=32.",
+   "reasoning_steps": [
+    "השערה ראשונית מפתה: הכפלה פי 2 (2,4,8...) - נראית מתאימה לשלושת האיברים הראשונים",
+    "בדיקת האיבר הרביעי: אילו הכפלה הייתה נכונה, היה צריך להיות 16, אך נתון 14 - ההשערה נפסלת",
+    "חישוב ההפרשים בפועל: 2,4,6,8 - עולים ב-2 בכל פעם (הפרש מסדר שני קבוע)",
+    "החלה: ההפרש הבא הוא 10, ולכן 22+10=32"
+   ],
+   "formal_spec": {
+    "kind_group": "sequence",
+    "kind": "hypothesis_pivot",
+    "known_terms": [
+     2,
+     4,
+     8,
+     14,
+     22
+    ],
+    "decoy_rule": "doubling",
+    "decoy_fits_until_index": 2,
+    "expected_next": 32
+   },
+   "rubric_score": {
+    "I": 3,
+    "H": 3,
+    "R": 2,
+    "D": 3,
+    "W": 1,
+    "total": 12,
+    "rubric_level": 4,
+    "note": "שלושת האיברים הראשונים תואמים בכוונה השערת-דחק (הכפלה) שנשברת באיבר הרביעי - דורש נכונות לנטוש השערה ראשונית סבירה"
+   },
+   "prerequisite_knowledge": [],
+   "logical_validation_detail": "predicted next=32; expected=32",
+   "validation_stages": {
+    "structural_validation": true,
+    "logical_validation": true,
+    "logical_validation_status": "passed",
+    "content_quality_validation": true,
+    "difficulty_validation": true,
+    "approved": true
+   }
+  },
+  {
+   "id": "q_gold_sh1",
+   "category": "shapes_spatial",
+   "subcategory": "superposition",
+   "skills": [
+    "superposition",
+    "hypothesis_narrowing_across_examples"
+   ],
+   "difficulty": 5,
+   "prompt": "בכל עמודה, התא התחתון מתקבל מחפיפה בין שני התאים העליונים לפי כלל קבוע וזהה בכל העמודות. שימו לב: יותר מכלל אחד עשוי להתאים לדוגמה הראשונה בלבד - יש לבדוק את כל הדוגמאות הידועות יחד. מהו התא החסר בעמודה השלישית?",
+   "options": [
+    {
+     "id": "a",
+     "text": "רבעים עליון-שמאלי, עליון-ימני ותחתון-ימני מלאים; תחתון-שמאלי ריק (XOR)",
+     "is_correct": true,
+     "distractor_type": null
+    },
+    {
+     "id": "b",
+     "text": "כל הרבעים החופפים בין שתי הצורות מלאים (OR) - מתאים לדוגמה הראשונה בלבד",
+     "is_correct": false,
+     "distractor_type": "hypothesis_only_fits_ambiguous_first_example"
+    },
+    {
+     "id": "c",
+     "text": "רק הרבעים המשותפים לשתיהן מלאים (AND)",
+     "is_correct": false,
+     "distractor_type": "wrong_operation"
+    },
+    {
+     "id": "d",
+     "text": "זהה לתא העליון-שמאלי בעמודה 3 בדיוק",
+     "is_correct": false,
+     "distractor_type": "reused_input_shape"
+    }
+   ],
+   "explanation": "בעמודה 1 (ללא חפיפה בין הצורות) גם XOR וגם OR נותנים אותה תוצאה - לא ניתן להכריע ביניהם. בעמודה 2 (עם חפיפה) XOR ו-OR נותנים תוצאות שונות; התא הנתון תואם רק XOR. לכן הכלל הנכון הוא XOR, ויש להחיל אותו על עמודה 3.",
+   "reasoning_steps": [
+    "בדיקת עמודה 1: XOR=[1,1,0,0] וגם OR=[1,1,0,0] - זהות, לא ניתן להכריע איזה כלל נכון מהדוגמה הזו בלבד",
+    "בדיקת עמודה 2: XOR=[1,0,0,0], OR=[1,1,0,0] - שונים; התא הנתון הוא [1,0,0,0], כלומר תואם XOR בלבד ולא OR",
+    "מסקנה: הכלל האמיתי הוא XOR (נפסל OR בעזרת עמודה 2)",
+    "החלת XOR על עמודה 3: [1,0,1,1] XOR [0,1,1,0] = [1,1,0,1]"
+   ],
+   "formal_spec": {
+    "kind_group": "shape_schema",
+    "type": "superposition_matrix",
+    "quadrant_order": [
+     "top_left",
+     "top_right",
+     "bottom_left",
+     "bottom_right"
+    ],
+    "columns": [
+     {
+      "top1": [
+       1,
+       0,
+       0,
+       0
+      ],
+      "top2": [
+       0,
+       1,
+       0,
+       0
+      ],
+      "bottom": [
+       1,
+       1,
+       0,
+       0
+      ]
+     },
+     {
+      "top1": [
+       1,
+       1,
+       0,
+       0
+      ],
+      "top2": [
+       0,
+       1,
+       0,
+       0
+      ],
+      "bottom": [
+       1,
+       0,
+       0,
+       0
+      ]
+     },
+     {
+      "top1": [
+       1,
+       0,
+       1,
+       1
+      ],
+      "top2": [
+       0,
+       1,
+       1,
+       0
+      ],
+      "bottom": null
+     }
+    ],
+    "options": {
+     "a": [
+      1,
+      1,
+      0,
+      1
+     ],
+     "b": [
+      1,
+      1,
+      1,
+      1
+     ]
+    }
+   },
+   "rubric_score": {
+    "I": 3,
+    "H": 3,
+    "R": 3,
+    "D": 3,
+    "W": 2,
+    "total": 14,
+    "rubric_level": 5,
+    "note": "עמודה 1 נבנתה בכוונה כך ש-XOR ו-OR נותנים תוצאה זהה (עמימות אמיתית); רק עמודה 2 מכריעה ביניהם - תהליך צמצום-השערות רב-שלבי אמיתי"
+   },
+   "prerequisite_knowledge": [],
+   "visual_schema": {
+    "type": "superposition_matrix",
+    "note": "same structure as formal_spec"
+   },
+   "logical_validation_detail": "predicted XOR=[1, 1, 0, 1]; option a=[1, 1, 0, 1]",
+   "validation_stages": {
+    "structural_validation": true,
+    "logical_validation": true,
+    "logical_validation_status": "passed",
+    "content_quality_validation": true,
+    "difficulty_validation": true,
+    "approved": true
+   }
+  },
+  {
+   "id": "q_gold_sh2",
+   "category": "shapes_spatial",
+   "subcategory": "mental_rotation",
+   "skills": [
+    "mental_rotation",
+    "multi_element_tracking",
+    "horizontal_axis"
+   ],
+   "difficulty": 5,
+   "prompt": "על קובייה מצויר סימן נקודה על הפאה הקדמית ופס על הפאה העליונה. מגלגלים את הקובייה קדימה (סיבוב של 90° סביב ציר אופקי מצד לצד). היכן יימצאו הנקודה והפס לאחר הגלגול?",
+   "options": [
+    {
+     "id": "a",
+     "text": "הנקודה תהיה בפאה התחתונה, והפס יהיה בפאה הקדמית",
+     "is_correct": true,
+     "distractor_type": null
+    },
+    {
+     "id": "b",
+     "text": "הנקודה תהיה בפאה האחורית, והפס יהיה בפאה העליונה (כאילו לא זזו)",
+     "is_correct": false,
+     "distractor_type": "used_vertical_axis_rule_by_mistake"
+    },
+    {
+     "id": "c",
+     "text": "הנקודה תישאר בפאה הקדמית, והפס יעבור לפאה האחורית",
+     "is_correct": false,
+     "distractor_type": "wrong_direction"
+    },
+    {
+     "id": "d",
+     "text": "הנקודה תהיה בפאה העליונה, והפס יהיה בפאה התחתונה (החלפה מלאה)",
+     "is_correct": false,
+     "distractor_type": "overshoots_180_degrees"
+    }
+   ],
+   "explanation": "בגלגול קדימה סביב ציר אופקי (צד לצד): קדמית->תחתונה, תחתונה->אחורית, אחורית->עליונה, עליונה->קדמית. הנקודה (הייתה קדמית) עוברת לתחתונה; הפס (היה עליון) עובר לקדמית.",
+   "reasoning_steps": [
+    "זיהוי ציר הסיבוב: אופקי (צד לצד), לא אנכי - כלל שונה מסיבוב סביב ציר אנכי",
+    "מיפוי מחזור הפאות בגלגול קדימה: קדמית->תחתונה->אחורית->עליונה->קדמית",
+    "מעקב אחר הנקודה (קדמית): עוברת לתחתונה",
+    "מעקב אחר הפס (עליונה): עובר לקדמית - יש לעקוב אחרי שני הסימנים בנפרד ובו-זמנית"
+   ],
+   "formal_spec": {
+    "kind_group": "shape_schema",
+    "type": "cube_rotation_multi",
+    "initial_marks": {
+     "dot": "front",
+     "stripe": "top"
+    },
+    "rotation_degrees": 90,
+    "options": {
+     "a": {
+      "dot": "bottom",
+      "stripe": "front"
+     }
+    }
+   },
+   "rubric_score": {
+    "I": 3,
+    "H": 2,
+    "R": 3,
+    "D": 2,
+    "W": 3,
+    "total": 13,
+    "rubric_level": 5,
+    "note": "שני סימנים במעקב בו-זמני תחת ציר סיבוב שונה מהדוגמה הקודמת (אופקי ולא אנכי) - עומס זיכרון עבודה גבוה יותר"
+   },
+   "prerequisite_knowledge": [],
+   "visual_schema": {
+    "type": "cube_rotation_multi",
+    "initial_marks": {
+     "dot": "front",
+     "stripe": "top"
+    },
+    "rotation_axis": "horizontal_side_to_side",
+    "rotation_direction": "rolling_forward",
+    "rotation_degrees": 90,
+    "options": {
+     "a": {
+      "dot": "bottom",
+      "stripe": "front"
+     },
+     "b": {
+      "dot": "back",
+      "stripe": "top"
+     },
+     "c": {
+      "dot": "front",
+      "stripe": "back"
+     },
+     "d": {
+      "dot": "top",
+      "stripe": "bottom"
+     }
+    }
+   },
+   "logical_validation_detail": "predicted={'dot': 'bottom', 'stripe': 'front'}; option a={'dot': 'bottom', 'stripe': 'front'}",
+   "validation_stages": {
+    "structural_validation": true,
+    "logical_validation": true,
+    "logical_validation_status": "passed",
+    "content_quality_validation": true,
+    "difficulty_validation": true,
+    "approved": true
+   }
+  }
+ ]
+}

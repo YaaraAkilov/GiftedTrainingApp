@@ -1,0 +1,30 @@
+{
+  "version": "v7_release_candidate",
+  "total_questions": 1634,
+  "active_questions": 1500,
+  "seed_questions": 134,
+  "pending_semantic": 134,
+  "active_by_category": {
+    "quantitative": 560,
+    "series": 540,
+    "logic": 280,
+    "shapes_spatial": 120
+  },
+  "active_by_difficulty": {
+    "1": 141,
+    "2": 105,
+    "3": 337,
+    "4": 728,
+    "5": 189
+  },
+  "active_nonvisual_exact_prompt_duplicates": 0,
+  "active_visual_content_fingerprint_duplicates": 0,
+  "formal_checker_failures": 0,
+  "structural_errors": 0,
+  "passed": true,
+  "notes": [
+    "Generated release bank rebuilt from v6 with 1,500 active questions; semantic-pending seed items remain unpublished.",
+    "Exact-prompt uniqueness is enforced for non-visual items; visual uniqueness is checked using prompt+options+visual_schema fingerprint.",
+    "Difficulty is stored as calibrated prior and should later be refined from real usage data."
+  ]
+}

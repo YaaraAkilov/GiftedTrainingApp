@@ -1,0 +1,25 @@
+{
+  "version": "v4_content_engine",
+  "total_questions": 1643,
+  "generated_questions": 1529,
+  "active_questions": 1509,
+  "semantic_review_pending": 164,
+  "formal_failures": 0,
+  "structural_failures": 0,
+  "duplicate_content_hashes": 0,
+  "semantic_family_count": 360,
+  "categories": {
+    "logic": 283,
+    "analogies": 74,
+    "quantitative": 584,
+    "series": 579,
+    "shapes_spatial": 123
+  },
+  "active_by_category": {
+    "logic": 268,
+    "quantitative": 569,
+    "series": 563,
+    "shapes_spatial": 109
+  },
+  "note": "Generated content is published only when structural validation and applicable mechanical verification pass. Analogy candidates remain pending semantic review."
+}
