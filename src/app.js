@@ -1,26 +1,40 @@
 const state={
-  questions:[], profile:null,
+  questions:[], profile:null, profiles:[], activeProfileId:null,
   history:{shown:[],attempts:[],mistakes:[],sessions:[],daily:{date:null,ids:[],completed:false}},
   currentSession:null,
   view:'home'
 };
-const KEY='gifted_training_state_v9';
-const LEGACY_KEYS=['gifted_training_state_v3'];
+const KEY='gifted_training_state_v10';
+const LEGACY_KEYS=['gifted_training_state_v9','gifted_training_state_v3'];
+function emptyHistory(){return {shown:[],attempts:[],mistakes:[],sessions:[],daily:{date:null,ids:[],completed:false}}}
+function normalizeHistory(h={}){const out={...emptyHistory(),...h};for(const k of ['shown','attempts','mistakes','sessions'])if(!Array.isArray(out[k]))out[k]=[];if(!out.daily||typeof out.daily!=='object')out.daily={date:null,ids:[],completed:false};return out}
+function activeProfile(){return state.profiles.find(p=>p.id===state.activeProfileId)||null}
+function syncActiveProfile(){const p=activeProfile();state.profile=p?{display_name:p.display_name}:null;state.history=p?normalizeHistory(p.history):emptyHistory();if(p)p.history=state.history}
+function persistProfiles(){localStorage.setItem(KEY,JSON.stringify({version:10,activeProfileId:state.activeProfileId,profiles:state.profiles}))}
 const catLabels={logic:'היגיון והסקה',analogies:'אנלוגיות',quantitative:'חשיבה כמותית',series:'סדרות וחוקיות',shapes_spatial:'צורות ומרחב',sentence_completion:'השלמת משפטים',vocabulary:'אוצר מילים',odd_one_out:'יוצא מן הכלל',nonword_context:'מילת תפל',reading_comprehension:'הבנת הנקרא'};
 const catIcons={logic:'🧠',analogies:'🔗',quantitative:'🔢',series:'📈',shapes_spatial:'🔷',sentence_completion:'✍️',vocabulary:'📚',odd_one_out:'🧩',nonword_context:'🪄',reading_comprehension:'📖'};
 const letter=['א','ב','ג','ד'];
 
 function loadStore(){
   try{
-    let raw=localStorage.getItem(KEY); if(!raw){for(const k of LEGACY_KEYS){if(localStorage.getItem(k)){raw=localStorage.getItem(k);break}}}
-    const x=JSON.parse(raw||'{}');
-    if(x.profile) state.profile=x.profile;
-    if(x.history) state.history={...state.history,...x.history};
-    for(const k of ['shown','attempts','mistakes','sessions']) if(!Array.isArray(state.history[k])) state.history[k]=[];
-    if(!state.history.daily||typeof state.history.daily!=='object') state.history.daily={date:null,ids:[],completed:false};
-  }catch(e){}
+    const current=localStorage.getItem(KEY);
+    if(current){
+      const x=JSON.parse(current||'{}');
+      state.profiles=Array.isArray(x.profiles)?x.profiles:[];
+      state.activeProfileId=x.activeProfileId||state.profiles[0]?.id||null;
+      state.profiles.forEach(p=>p.history=normalizeHistory(p.history));
+      syncActiveProfile(); return;
+    }
+    let legacyRaw=null;
+    for(const k of LEGACY_KEYS){if(localStorage.getItem(k)){legacyRaw=localStorage.getItem(k);break}}
+    if(legacyRaw){
+      const x=JSON.parse(legacyRaw||'{}');
+      const migrated={id:uid(),display_name:x.profile?.display_name||'שחקן/ית 1',createdAt:Date.now(),history:normalizeHistory(x.history)};
+      state.profiles=[migrated];state.activeProfileId=migrated.id;syncActiveProfile();persistProfiles();
+    }
+  }catch(e){state.profiles=[];state.activeProfileId=null;syncActiveProfile()}
 }
-function saveStore(){localStorage.setItem(KEY,JSON.stringify({profile:state.profile,history:state.history}));}
+function saveStore(){const p=activeProfile();if(p){p.display_name=state.profile?.display_name||p.display_name;p.history=state.history}persistProfiles();}
 function uid(){return Math.random().toString(36).slice(2)+Date.now().toString(36)}
 function questionIsPublished(q){return q?.validation?.approved_for_pool===true;}
 function approvedPool(sim=false){return state.questions.filter(q=>questionIsPublished(q)&&(!sim||(q.mode_compatibility||[]).includes('simulation')));}
@@ -110,7 +124,9 @@ function ensureDaily(){
   }
 }
 function dailyQuestions(){ensureDaily();return state.history.daily.ids.map(id=>state.questions.find(q=>q.id===id)).filter(Boolean)}
+function updateTopUser(){const el=document.querySelector('#topUserName');if(el)el.textContent=state.profile?.display_name||'משתמש'}
 function renderHome(){
+  updateTopUser();
   const pool=activePool(); const att=state.history.attempts; const correct=att.filter(a=>a.correct).length; const rate=att.length?Math.round(correct/att.length*100):0;
   const pendingSemantic=state.questions.filter(q=>q.validation?.semantic_review?.status==='pending').length;
   const name=state.profile?.display_name||'אלוף/ת'; const dqs=dailyQuestions();
@@ -120,15 +136,16 @@ function renderHome(){
     <div class="hero-stat"><div class="muted">התקדמות עד עכשיו</div><div class="stat-big">${rate}%</div><div class="muted">${correct} נכונות מתוך ${att.length}</div><div class="space"></div><div class="row"><span class="pill">${pool.length} שאלות פעילות</span><span class="pill">🔥 רצף ${calcStreak()}</span></div><div class="footer-note">הצגת שאלות מתבצעת מתוך מאגר מאושר בלבד.</div></div>
   </section>
   ${pendingSemantic?`<div class="notice" style="margin:18px 0">🔎 ${pendingSemantic} שאלות נמצאות בבדיקת איכות סמנטית ולא יוצגו באימון עד שיאושרו.</div>`:''}
-  <div class="section-title"><h2>איך בא לך להתאמן?</h2></div>
+  <div class="mode-banner practice-banner"><div><b>🎯 תרגול ולמידה</b><div class="muted">משוב, רמזים והסברים תוך כדי</div></div></div>
   <section class="grid grid-3">
     ${action('⚡','אימון מהיר','10 שאלות מעורבות','startQuick()')}
     ${action('🧠','אדפטיבי','המערכת מזהה מה כדאי לתרגל','startAdaptive()')}
-    ${action('🎯','לפי נושא','תחום ותת-תחום','showPracticePicker()')}
+    ${action('🎯','לפי נושא','בחירת תחום לתרגול','showPracticePicker()')}
     ${action('⏱️','אימון 20','20 שאלות · 15 דקות','startFixed(20,true,false)')}
-    ${action('📝','סימולציה','מצב מבחן · 35 דקות','startSimulation()')}
+    ${action('📚','אימון 40','40 שאלות מעורבות · ללא לחץ','startFixed(40,false,false)')}
     ${action('🔥','אתגר 5 דקות','כמה שאלות תפתור/י בזמן?','startTimedChallenge()')}
   </section>
+  <div class="mode-banner exam-banner"><div><b>📝 סימולציית מבחן מלא</b><div class="muted">90 שאלות · 90 דקות · ללא רמזים או משוב עד הסיום</div></div><button class="btn btn-primary" onclick="showSimulationIntro()">התחלת סימולציה</button></div>
   <div class="section-title"><h2>אתגר יומי</h2><button class="btn btn-ghost" onclick="startDaily()">${state.history.daily.completed?'השלמת היום':'להתחיל'}</button></div>
   <div class="card daily-card"><div><div class="action-title">5 שאלות יומיות</div><div class="muted">${dqs.length===5?'משימה קבועה להיום · '+(state.history.daily.completed?'הושלמה ✅':'עוד לא הושלמה'): 'טוען...'}</div></div><div class="daily-dots">${dqs.map((q,i)=>`<span class="daily-dot ${state.history.attempts.some(a=>a.questionId===q.id)?'done':''}">${i+1}</span>`).join('')}</div></div>
   <div class="section-title"><h2>התקדמות</h2><button class="btn btn-ghost" onclick="renderProgress()">דוח מלא</button></div>
@@ -178,11 +195,11 @@ function startTimedChallenge(){
   const qs=pickQuestions(Math.max(12,activePool().length),{smart:true});
   startSession(qs,{mode:'5 דקות',timed:true,timeLimit:5*60,fast:true,challenge:true});
 }
-function simulationQuestions(count=30){
+function simulationQuestions(count=90){
   const pool=approvedPool(true).filter(q=>!recentIds(120).has(q.id));
   const fallback=approvedPool(true);
-  const categoryPlan={logic:4,quantitative:4,series:4,shapes_spatial:4,analogies:3,sentence_completion:3,vocabulary:2,odd_one_out:2,nonword_context:2,reading_comprehension:2};
-  const difficultyPlan={2:4,3:10,4:11,5:5};
+  const categoryPlan={logic:15,quantitative:20,series:20,shapes_spatial:15,analogies:10,sentence_completion:2,vocabulary:2,odd_one_out:2,nonword_context:2,reading_comprehension:2};
+  const difficultyPlan={4:54,5:36};
   const chosen=[], usedFamilies=new Set(), usedIds=new Set(), diffCount={1:0,2:0,3:0,4:0,5:0};
   const take=(cat,n,source)=>{
     const candidates=shuffle(source.filter(q=>q.category===cat&&!usedIds.has(q.id)&&!usedFamilies.has(familyKey(q))));
@@ -212,15 +229,34 @@ function simulationQuestions(count=30){
   }
   return shuffle(chosen).slice(0,count);
 }
+function showSimulationIntro(){
+  const ready=approvedPool(true).filter(q=>[4,5].includes(Number(q.difficulty_calibrated||q.difficulty_prior))).length;
+  document.querySelector('#view').innerHTML=`<div class="exam-intro">
+    <div class="exam-intro-card card">
+      <div class="exam-icon">📝</div>
+      <div class="eyebrow">סימולציית מבחן מלא</div>
+      <h1>כאן עובדים כמו במבחן</h1>
+      <p class="lead">הסימולציה מיועדת לתרגול תנאי מבחן, ולא ללמידה תוך כדי.</p>
+      <div class="exam-rules grid grid-3">
+        <div class="rule"><b>90</b><span>שאלות</span></div>
+        <div class="rule"><b>90:00</b><span>דקות</span></div>
+        <div class="rule"><b>0</b><span>רמזים ומשוב</span></div>
+      </div>
+      <div class="exam-check">✅ התשובות נבדקות רק בסיום<br/>✅ אפשר לדלג ולחזור לשאלות<br/>✅ השעון ממשיך לרוץ גם כשחוזרים לשאלה קודמת</div>
+      <div class="notice">במאגר כרגע ${ready} שאלות שאושרו למסלול הסימולציה. הסימולציה תיבנה מתוך מאגר זה תוך שמירה על גיוון בין תחומים ורמות קושי.</div>
+      <div class="row exam-actions"><button class="btn btn-ghost" onclick="renderHome()">חזרה</button><button class="btn btn-primary" onclick="startSimulation()">🚀 להתחיל מבחן</button></div>
+    </div>
+  </div>`;
+}
 function startSimulation(){
-  const qs=simulationQuestions(30);
-  if(qs.length<20){alert('כרגע אין מספיק שאלות מאושרות ומגוונות לסימולציה.');return}
-  startSession(qs,{mode:'simulation',timed:true,timeLimit:35*60,fast:false,simulation:true});
+  const qs=simulationQuestions(90);
+  if(qs.length<90){alert('כרגע אין מספיק שאלות מאושרות ומגוונות לסימולציה מלאה.');return}
+  startSession(qs,{mode:'simulation',kind:'simulation',timed:true,timeLimit:90*60,fast:false,simulation:true});
 }
 function startDaily(){const qs=dailyQuestions();if(!qs.length){alert('אין כרגע שאלות יומיות זמינות.');return}startSession(qs,{mode:'אתגר יומי',timed:false,timeLimit:0,daily:true})}
 function startSession(qs,opt){
   if(!qs.length){alert('אין כרגע מספיק שאלות מאושרות במאגר.');return}
-  state.currentSession={id:uid(),qs,idx:0,answers:[],start:Date.now(),perQuestionStart:Date.now(),hintUsed:false,simReview:false,...opt};
+  state.currentSession={id:uid(),qs,idx:0,answers:[],start:Date.now(),perQuestionStart:Date.now(),hintUsed:false,simReview:false,kind:opt.kind||'practice',...opt};
   renderSession();
 }
 function sessionAnswered(q){return state.currentSession?.answers.find(a=>a.questionId===q.id)}
@@ -229,15 +265,15 @@ function renderSession(){
   const answered=sessionAnswered(q); const pct=Math.round(((s.idx+(answered?1:0))/s.qs.length)*100); const remain=s.timed?Math.max(0,s.timeLimit-Math.floor((Date.now()-s.start)/1000)):null;
   const label=s.mode==='simulation'?'מצב מבחן':s.mode==='adaptive'?'אדפטיבי':s.mode;
   const palette=s.mode==='simulation'?`<div class="sim-palette">${s.qs.map((qq,i)=>{const aa=sessionAnswered(qq);return `<button class="sim-dot ${aa?'answered':''} ${i===s.idx?'current':''}" onclick="gotoQuestion(${i})" title="שאלה ${i+1}">${i+1}</button>`}).join('')}</div>`:'';
-  const controls=s.mode==='simulation'?`<div class="sim-controls"><button class="btn btn-ghost" onclick="prevQuestion()" ${s.idx===0?'disabled':''}>← הקודמת</button>${!answered&&s.idx<s.qs.length-1?`<button class="btn btn-ghost" onclick="skipQuestion()">דלג</button>`:''}<button class="btn btn-primary" onclick="nextQuestion()">${s.idx===s.qs.length-1?'סיום סימולציה':'המשך'}</button></div>`:(answered?`<div class="row" style="justify-content:space-between;margin-top:14px"><button class="btn btn-ghost" onclick="prevQuestion()" ${s.idx===0?'disabled':''}>חזרה</button><button class="btn btn-primary" onclick="nextQuestion()">${s.idx===s.qs.length-1?'סיום':'המשך'}</button></div>`:'');
-  document.querySelector('#view').innerHTML=`<div class="session"><div class="session-head"><div><div class="q-num">שאלה ${s.idx+1} מתוך ${s.qs.length}</div><div class="muted">${catLabels[q.category]||''} · רמה ${q.difficulty_calibrated||q.difficulty_prior||'-'}</div></div><div class="row"><span class="pill">${label}</span>${s.timed?`<span class="pill" id="timer">${formatTime(remain)}</span>`:''}</div></div><div class="progress"><div style="width:${pct}%"></div></div>${palette}<div class="card question-card"><div class="q-meta"><div class="difficulty">${(q.skills||[]).slice(0,3).join(' · ')}</div>${q.prerequisite_knowledge?.length?`<div class="tag">דורש ידע קודם</div>`:''}</div><div class="prompt">${esc(q.prompt)}</div>${renderVisual(q)}<div class="option-grid">${(q.options||[]).map((o,i)=>optionHtml(q,o,i,answered,s.mode==='simulation')).join('')}</div>${answered&&s.mode!=='simulation'?feedbackHtml(q,answered):''}${!answered&&q.hint&&s.mode!=='simulation'?`<div class="row" style="margin-top:14px"><button class="btn btn-ghost" onclick="showHint()">💡 רמז</button><span id="hintBox"></span></div>`:''}</div>${controls}</div>`;
+  const controls=s.mode==='simulation'?`<div class="sim-controls"><div class="sim-status">${s.answers.length} נענו · ${s.qs.length-s.answers.length} לא נענו</div><button class="btn btn-ghost" onclick="prevQuestion()" ${s.idx===0?'disabled':''}>← הקודמת</button>${!answered&&s.idx<s.qs.length-1?`<button class="btn btn-ghost" onclick="skipQuestion()">דלג</button>`:''}<button class="btn btn-primary" onclick="nextQuestion()">${s.idx===s.qs.length-1?'סיום סימולציה':'המשך'}</button></div>`:(answered?`<div class="row" style="justify-content:space-between;margin-top:14px"><button class="btn btn-ghost" onclick="prevQuestion()" ${s.idx===0?'disabled':''}>חזרה</button><button class="btn btn-primary" onclick="nextQuestion()">${s.idx===s.qs.length-1?'סיום':'המשך'}</button></div>`:'');
+  document.querySelector('#view').innerHTML=`<div class="session"><div class="session-head"><div><div class="q-num">שאלה ${s.idx+1} מתוך ${s.qs.length}</div><div class="muted">${catLabels[q.category]||''} · רמה ${q.difficulty_calibrated||q.difficulty_prior||'-'}</div></div><div class="row"><button class="btn btn-danger btn-exit" onclick="exitSession()">יציאה</button><span class="pill">${label}</span>${s.timed?`<span class="pill" id="timer">${formatTime(remain)}</span>`:''}</div></div><div class="progress"><div style="width:${pct}%"></div></div>${palette}<div class="card question-card"><div class="q-meta"><div class="difficulty">${(q.skills||[]).slice(0,3).join(' · ')}</div>${q.prerequisite_knowledge?.length?`<div class="tag">דורש ידע קודם</div>`:''}</div><div class="prompt">${esc(q.prompt)}</div>${renderVisual(q)}<div class="option-grid">${(q.options||[]).map((o,i)=>optionHtml(q,o,i,answered,s.mode==='simulation')).join('')}</div>${answered&&s.mode!=='simulation'?feedbackHtml(q,answered):''}${!answered&&q.hint&&s.mode!=='simulation'?`<div class="row" style="margin-top:14px"><button class="btn btn-ghost" onclick="showHint()">💡 רמז</button><span id="hintBox"></span></div>`:''}</div>${controls}</div>`;
   if(s.timed)startTimerTick();
 }
 function optionHtml(q,o,i,answered,sim){let cls='option';if(answered){if(o.id===q.correct_option_id)cls+=' correct';if(o.id===answered.chosenOptionId&&!answered.correct)cls+=' wrong';if(sim)cls+=' disabled'}return `<button class="${cls}" ${sim&&answered?'disabled':''} onclick="answer('${q.id}','${o.id}')"><span class="letter">${letter[i]||i+1}</span>${esc(o.text)}</button>`}
 function answer(qid,optId){
   const s=state.currentSession,q=s.qs[s.idx]; if(!q||s.answers.some(a=>a.questionId===qid))return;
   const time=Math.max(1,Math.round((Date.now()-s.perQuestionStart)/1000)); const correct=optId===q.correct_option_id;
-  const a={questionId:qid,chosenOptionId:optId,correct,time,skills:q.skills||[],difficulty:q.difficulty_calibrated||q.difficulty_prior,category:q.category,subcategory:q.subcategory,semantic_family_id:familyKey(q),timestamp:Date.now()};
+  const a={questionId:qid,chosenOptionId:optId,correct,time,skills:q.skills||[],difficulty:q.difficulty_calibrated||q.difficulty_prior,category:q.category,subcategory:q.subcategory,semantic_family_id:familyKey(q),sessionId:s.id,kind:s.kind||'practice',timestamp:Date.now()};
   s.answers.push(a);s.perQuestionStart=Date.now();state.history.attempts.push(a);state.history.shown.push(qid);
   if(!correct&&!state.history.mistakes.some(m=>m.questionId===qid))state.history.mistakes.push({questionId:qid,skills:q.skills||[],category:q.category,subcategory:q.subcategory,createdAt:Date.now(),resolved:false});
   if(correct){const m=state.history.mistakes.find(m=>m.questionId===qid);if(m){m.resolved=true;m.resolvedAt=Date.now();}}
@@ -251,10 +287,25 @@ function nextQuestion(){const s=state.currentSession;if(!s)return;if(s.idx>=s.qs
 function skipQuestion(){const s=state.currentSession;if(!s||s.mode!=='simulation')return;if(s.idx<s.qs.length-1){s.idx++;s.perQuestionStart=Date.now();renderSession()}else finishSession()}
 function gotoQuestion(i){const s=state.currentSession;if(!s||s.mode!=='simulation')return;if(i>=0&&i<s.qs.length){s.idx=i;s.perQuestionStart=Date.now();renderSession()}}
 function prevQuestion(){const s=state.currentSession;if(s.idx>0){s.idx--;s.perQuestionStart=Date.now();renderSession()}}
+function exitSession(){
+  const s=state.currentSession;if(!s)return;
+  const what=s.mode==='simulation'?'הסימולציה':'התרגול';
+  if(!confirm(`לצאת מ${what}? התשובות שכבר נענו יישמרו, אבל ${what} יסומן כלא הושלם.`))return;
+  state.history.sessions.push({id:s.id,userId:state.activeProfileId,mode:s.mode,kind:s.kind||'practice',status:'abandoned',questionCount:s.qs.length,answered:s.answers.length,correct:s.answers.filter(a=>a.correct).length,score:null,duration:Math.round((Date.now()-s.start)/1000),timestamp:Date.now()});
+  saveStore();state.currentSession=null;clearTimeout(window._timer);renderHome();
+}
+function renderProfilePicker(){
+  updateTopUser();
+  const cards=state.profiles.map(p=>`<button class="card profile-card" onclick="selectProfile('${p.id}')"><div class="profile-avatar">${esc((p.display_name||'?').trim().charAt(0)||'?')}</div><div class="action-title">${esc(p.display_name)}</div><div class="action-sub">${p.history?.sessions?.filter(x=>x.status==='completed').length||0} פעילויות שהושלמו</div></button>`).join('');
+  document.querySelector('#view').innerHTML=`<div class="profile-picker"><div class="section-title"><h2>מי מתרגל/ת עכשיו?</h2></div><div class="grid grid-3">${cards}<button class="card profile-card add-profile" onclick="addProfile()"><div class="profile-avatar">＋</div><div class="action-title">הוספת משתמש</div><div class="action-sub">התקדמות נפרדת לכל ילד/ה</div></button></div></div>`;
+}
+function selectProfile(id){if(state.currentSession)return;state.activeProfileId=id;syncActiveProfile();saveStore();ensureDaily();renderHome()}
+function addProfile(){const name=prompt('מה שם הילד/ה?');if(!name||!name.trim())return;const p={id:uid(),display_name:name.trim(),createdAt:Date.now(),history:emptyHistory()};state.profiles.push(p);state.activeProfileId=p.id;syncActiveProfile();saveStore();ensureDaily();renderHome()}
+function switchProfile(){if(state.currentSession){alert('יש לצאת מהתרגול לפני החלפת משתמש.');return}renderProfilePicker()}
 function finishSession(){
   const s=state.currentSession;if(!s)return;
   const completed=s.answers.length,correct=s.answers.filter(a=>a.correct).length;
-  state.history.sessions.push({id:s.id,mode:s.mode,questionCount:s.qs.length,answered:completed,correct,score:s.qs.length?Math.round(correct/s.qs.length*100):0,duration:Math.round((Date.now()-s.start)/1000),timestamp:Date.now()});
+  state.history.sessions.push({id:s.id,userId:state.activeProfileId,mode:s.mode,kind:s.kind||'practice',status:'completed',questionCount:s.qs.length,answered:completed,correct,score:s.qs.length?Math.round(correct/s.qs.length*100):0,duration:Math.round((Date.now()-s.start)/1000),timestamp:Date.now()});
   if(s.daily&&completed===s.qs.length)state.history.daily.completed=true;
   saveStore();renderResults(s);state.currentSession=null;clearTimeout(window._timer);
 }
@@ -262,12 +313,14 @@ function renderResults(s){
   const correct=s.answers.filter(a=>a.correct).length,answered=s.answers.length,rate=s.qs.length?Math.round(correct/s.qs.length*100):0;
   const by={};s.qs.forEach(q=>{by[q.category] ||= {n:0,c:0};by[q.category].n++;if(s.answers.find(x=>x.questionId===q.id)?.correct)by[q.category].c++});
   const mins=Math.floor((Date.now()-s.start)/60000), secs=Math.floor((Date.now()-s.start)/1000)%60;
-  document.querySelector('#view').innerHTML=`<div class="results-hero card"><div class="eyebrow">${s.mode==='simulation'?'סימולציה':s.mode} הסתיים</div><div class="score-ring">${rate}%</div><div class="muted">${correct} נכונות מתוך ${answered} שאלות שנענו · זמן ${mins}:${String(secs).padStart(2,'0')}</div><div class="space"></div><div class="row" style="justify-content:center"><button class="btn btn-primary" onclick="renderHome()">חזרה לבית</button><button class="btn btn-ghost" onclick="renderMistakes()">תרגול טעויות</button><button class="btn btn-ghost" onclick="startAdaptive()">אימון המשך</button></div></div><div class="section-title"><h2>פירוט לפי תחום</h2></div><div class="grid grid-3">${Object.entries(by).map(([k,v])=>`<div class="card"><div class="muted">${catLabels[k]||k}</div><div style="font-size:28px;font-weight:800">${v.n?Math.round(v.c/v.n*100):0}%</div><div class="barline"><div class="track"><div class="fill" style="width:${v.n?Math.round(v.c/v.n*100):0}%"></div></div></div></div>`).join('')}</div><div class="section-title"><h2>מה כדאי לתרגל עכשיו?</h2></div><div class="card">${weakestSkills(3).length?weakestSkills(3).map(x=>`<div class="skill-row"><b>${esc(skillLabel(x.sk))}</b><span class="pill">שליטה ${Math.round(x.mastery*100)}%</span></div>`).join(''):'<div class="muted">עוד כמה אימונים ונוכל לתת המלצה אישית מדויקת יותר.</div>'}</div>`;
+  document.querySelector('#view').innerHTML=`<div class="results-hero card"><div class="eyebrow">${s.mode==='simulation'?'📝 סימולציית מבחן מלאה':s.mode+' הסתיים'}</div><div class="score-ring">${rate}%</div><div class="muted">${correct} נכונות מתוך ${answered} שאלות שנענו · ${s.mode==='simulation'?`${s.qs.length-answered} שאלות לא נענו · `:''}זמן ${mins}:${String(secs).padStart(2,'0')}</div>${s.mode==='simulation'?`<div class="exam-result-note">הציון הוא תוצאה של הסימולציה בלבד ואינו ציון רשמי של משרד החינוך.</div>`:''}<div class="space"></div><div class="row" style="justify-content:center"><button class="btn btn-primary" onclick="renderHome()">חזרה לבית</button><button class="btn btn-ghost" onclick="renderMistakes()">תרגול טעויות</button><button class="btn btn-ghost" onclick="startAdaptive()">אימון המשך</button></div></div><div class="section-title"><h2>פירוט לפי תחום</h2></div><div class="grid grid-3">${Object.entries(by).map(([k,v])=>`<div class="card"><div class="muted">${catLabels[k]||k}</div><div style="font-size:28px;font-weight:800">${v.n?Math.round(v.c/v.n*100):0}%</div><div class="barline"><div class="track"><div class="fill" style="width:${v.n?Math.round(v.c/v.n*100):0}%"></div></div></div></div>`).join('')}</div><div class="section-title"><h2>מה כדאי לתרגל עכשיו?</h2></div><div class="card">${weakestSkills(3).length?weakestSkills(3).map(x=>`<div class="skill-row"><b>${esc(skillLabel(x.sk))}</b><span class="pill">שליטה ${Math.round(x.mastery*100)}%</span></div>`).join(''):'<div class="muted">עוד כמה אימונים ונוכל לתת המלצה אישית מדויקת יותר.</div>'}</div>`;
 }
 function renderProgress(){
   const att=state.history.attempts; const cats=Object.keys(catLabels).map(k=>{const a=att.filter(x=>x.category===k);return [k,a.length?Math.round(a.filter(x=>x.correct).length/a.length*100):0,a.length]});
   const skills=statsBySkill(); const top=Object.entries(skills).sort((a,b)=>a[1].c/b[1].n-a[1].c/b[1].n).slice(0,6);
-  document.querySelector('#view').innerHTML=`<div class="section-title"><h2>ההתקדמות שלי</h2><button class="btn btn-ghost" onclick="renderHome()">חזרה</button></div><div class="grid grid-3">${cats.map(([k,r,n])=>`<div class="card"><div class="muted">${catLabels[k]}</div><div style="font-size:30px;font-weight:800">${r}%</div><div class="muted">${n} ניסיונות</div><div class="barline"><div class="track"><div class="fill" style="width:${r}%"></div></div></div></div>`).join('')}</div><div class="section-title"><h2>מיומנויות שכדאי לחזק</h2></div><div class="card">${top.length?top.map(([sk,s])=>`<div class="skill-row"><div><b>${esc(skillLabel(sk))}</b><div class="muted">${s.n} ניסיונות</div></div><span class="pill">${Math.round(s.c/s.n*100)}%</span></div>`).join(''):'<div class="muted">עדיין אין מספיק נתונים.</div>'}</div><div class="section-title"><h2>רצף</h2></div><div class="card"><div class="stat-big" style="font-size:42px">${calcStreak()} 🔥</div><div class="muted">תשובות נכונות רצופות</div></div>`;
+  const sims=state.history.sessions.filter(x=>x.kind==='simulation'&&x.status==='completed');
+  const simHtml=sims.length?sims.slice().reverse().slice(0,6).map((x,i)=>`<div class="card"><div class="muted">סימולציה ${sims.length-i}</div><div style="font-size:30px;font-weight:800">${x.score}%</div><div class="muted">${x.correct}/${x.questionCount} · ${Math.round(x.duration/60)} דקות</div></div>`).join(''):'<div class="notice">עדיין לא הושלמה סימולציית מבחן מלאה.</div>';
+  document.querySelector('#view').innerHTML=`<div class="section-title"><h2>ההתקדמות שלי</h2><button class="btn btn-ghost" onclick="renderHome()">חזרה</button></div><div class="section-title"><h2>סימולציות מבחן</h2></div><div class="grid grid-3">${simHtml}</div><div class="section-title"><h2>תרגול לפי תחום</h2></div><div class="grid grid-3">${cats.map(([k,r,n])=>`<div class="card"><div class="muted">${catLabels[k]}</div><div style="font-size:30px;font-weight:800">${r}%</div><div class="muted">${n} ניסיונות</div><div class="barline"><div class="track"><div class="fill" style="width:${r}%"></div></div></div></div>`).join('')}</div><div class="section-title"><h2>מיומנויות שכדאי לחזק</h2></div><div class="card">${top.length?top.map(([sk,s])=>`<div class="skill-row"><div><b>${esc(skillLabel(sk))}</b><div class="muted">${s.n} ניסיונות</div></div><span class="pill">${Math.round(s.c/s.n*100)}%</span></div>`).join(''):'<div class="muted">עדיין אין מספיק נתונים.</div>'}</div><div class="section-title"><h2>רצף</h2></div><div class="card"><div class="stat-big" style="font-size:42px">${calcStreak()} 🔥</div><div class="muted">תשובות נכונות רצופות</div></div>`;
 }
 function skillLabel(sk){return String(sk||'').replaceAll('_',' ')}
 function renderMistakes(){
@@ -292,9 +345,9 @@ function renderAdmin(){
   const diff=countByDifficulty(active);
   document.querySelector('#view').innerHTML=`<div class="section-title"><h2>Admin · מאגר תוכן</h2><button class="btn btn-ghost" onclick="renderHome()">חזרה</button></div><div class="notice">זהו מסך בקרה. שאלות שלא פורסמו נשארות זמינות לבדיקות פיתוח בלבד.</div><div class="grid grid-4">${miniMetric('סה״כ במאגר',qs.length)}${miniMetric('פעילות',pub)}${miniMetric('מוכנות לסימולציה',sim)}${miniMetric('Semantic Review',pending)}</div><div class="section-title"><h2>כיסוי הפעילות</h2></div><div class="grid grid-4">${byCat.map(([k,n])=>miniMetric(catLabels[k],n)).join('')}</div><div class="section-title"><h2>פיזור רמות קושי</h2></div><div class="grid grid-5">${[1,2,3,4,5].map(d=>miniMetric('רמה '+d,diff[d])).join('')}</div><div class="section-title"><h2>גיוון</h2></div><div class="card"><div class="row" style="justify-content:space-between"><span>Semantic families פעילות</span><span class="pill">${familyDiversity(active)}</span></div></div><div class="space"></div><div class="card"><table class="table"><thead><tr><th>ID</th><th>תחום</th><th>תת-תחום</th><th>רמה</th><th>סטטוס</th></tr></thead><tbody>${qs.slice(0,240).map(q=>`<tr><td>${q.id}</td><td>${catLabels[q.category]||q.category}</td><td>${esc(q.subcategory||'-')}</td><td>${q.difficulty_calibrated||q.difficulty_prior||'-'}</td><td>${questionIsPublished(q)?'<span class="pill">פעילה</span>':'<span class="tag">seed-only</span>'}</td></tr>`).join('')}</tbody></table></div>`;
 }
-function renderSettings(){document.querySelector('#view').innerHTML=`<div class="section-title"><h2>הגדרות</h2><button class="btn btn-ghost" onclick="renderHome()">חזרה</button></div><div class="card"><h3>פרופיל</h3><p class="muted">השם נשמר מקומית במכשיר.</p><div class="row"><input id="nameInput" value="${esc(state.profile?.display_name||'')}" placeholder="שם הילד/ה" style="flex:1;padding:12px 14px;border:1px solid var(--line);border-radius:12px;font:inherit"><button class="btn btn-primary" onclick="saveProfile()">שמור</button></div></div><div class="space"></div><div class="card"><h3>איפוס התקדמות</h3><p class="muted">מוחק את ההיסטוריה המקומית בלבד.</p><button class="btn btn-danger" onclick="resetProgress()">איפוס</button></div>`}
-function saveProfile(){state.profile={display_name:document.querySelector('#nameInput').value.trim()||'אלוף/ת'};saveStore();renderHome()}
-function resetProgress(){if(confirm('למחוק את כל ההתקדמות המקומית?')){state.history={shown:[],attempts:[],mistakes:[],sessions:[],daily:{date:null,ids:[],completed:false}};saveStore();renderSettings()}}
+function renderSettings(){updateTopUser();document.querySelector('#view').innerHTML=`<div class="section-title"><h2>הגדרות</h2><button class="btn btn-ghost" onclick="renderHome()">חזרה</button></div><div class="card"><h3>פרופיל נוכחי</h3><p class="muted">לכל משתמש נשמרים התרגולים, הסימולציות והטעויות בנפרד במכשיר.</p><div class="row"><input id="nameInput" value="${esc(state.profile?.display_name||'')}" placeholder="שם הילד/ה" style="flex:1;padding:12px 14px;border:1px solid var(--line);border-radius:12px;font:inherit"><button class="btn btn-primary" onclick="saveProfile()">שמור</button><button class="btn btn-ghost" onclick="switchProfile()">החלפת משתמש</button></div></div><div class="space"></div><div class="card"><h3>איפוס התקדמות של ${esc(state.profile?.display_name||'המשתמש')}</h3><p class="muted">מוחק רק את ההיסטוריה של המשתמש הנוכחי.</p><button class="btn btn-danger" onclick="resetProgress()">איפוס</button></div>`}
+function saveProfile(){const p=activeProfile();if(!p)return;const name=document.querySelector('#nameInput').value.trim()||'אלוף/ת';p.display_name=name;state.profile={display_name:name};saveStore();renderHome()}
+function resetProgress(){if(confirm('למחוק את כל ההתקדמות של המשתמש הנוכחי?')){state.history=emptyHistory();const p=activeProfile();if(p)p.history=state.history;saveStore();ensureDaily();renderSettings()}}
 function svgArrow(deg=0,reflected=false){
   const sx=reflected?-1:1;
   return `<svg viewBox="0 0 80 80" width="70" height="70" aria-hidden="true"><g transform="translate(40 40) rotate(${Number(deg)||0}) scale(${sx} 1) translate(-40 -40)"><path d="M16 40 H58" stroke="currentColor" stroke-width="6" stroke-linecap="round"/><path d="M48 25 L64 40 L48 55" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></g></svg>`;
@@ -341,10 +394,10 @@ function formatTime(sec){const m=Math.floor(sec/60),s=sec%60;return `${String(m)
 function esc(x=''){return String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 async function boot(){
   loadStore();
-  try{const r=await fetch('data/questions.json');const d=await r.json();state.questions=d.questions||[];ensureDaily();renderHome();if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});}
+  try{const r=await fetch('data/questions.json');const d=await r.json();state.questions=d.questions||[];if(state.activeProfileId){ensureDaily();renderHome()}else renderProfilePicker();if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});}
   catch(e){document.querySelector('#view').innerHTML='<div class="card"><h2>לא הצלחתי לטעון את המאגר</h2><p class="muted">בדקו שהאפליקציה רצה דרך שרת מקומי ולא בפתיחה ישירה של הקובץ.</p></div>';}
 }
 document.querySelector('#parentBtn').onclick=renderParent;document.querySelector('#settingsBtn').onclick=renderSettings;
-window.renderHome=renderHome;window.startQuick=startQuick;window.startAdaptive=startAdaptive;window.showPracticePicker=showPracticePicker;window.startFixed=startFixed;window.startSimulation=startSimulation;window.startTimedChallenge=startTimedChallenge;window.startDaily=startDaily;window.startCategory=startCategory;window.answer=answer;window.nextQuestion=nextQuestion;window.prevQuestion=prevQuestion;window.renderProgress=renderProgress;window.renderMistakes=renderMistakes;window.practiceSkill=practiceSkill;window.renderParent=renderParent;window.renderAdmin=renderAdmin;window.renderSettings=renderSettings;window.saveProfile=saveProfile;window.resetProgress=resetProgress;window.showHint=showHint;
+window.renderHome=renderHome; window.showSimulationIntro=showSimulationIntro;window.renderProfilePicker=renderProfilePicker;window.selectProfile=selectProfile;window.addProfile=addProfile;window.switchProfile=switchProfile;window.exitSession=exitSession;window.startQuick=startQuick;window.startAdaptive=startAdaptive;window.showPracticePicker=showPracticePicker;window.startFixed=startFixed;window.startSimulation=startSimulation;window.startTimedChallenge=startTimedChallenge;window.startDaily=startDaily;window.startCategory=startCategory;window.answer=answer;window.nextQuestion=nextQuestion;window.prevQuestion=prevQuestion;window.renderProgress=renderProgress;window.renderMistakes=renderMistakes;window.practiceSkill=practiceSkill;window.renderParent=renderParent;window.renderAdmin=renderAdmin;window.renderSettings=renderSettings;window.saveProfile=saveProfile;window.resetProgress=resetProgress;window.showHint=showHint;
 boot();
 if(location.hash==='#admin')setTimeout(renderAdmin,200);

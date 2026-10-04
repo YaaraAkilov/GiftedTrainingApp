@@ -497,9 +497,9 @@ def check_shape_schema(spec):
     if t == 'combined_transform_sequence':
         cells = spec['cells']  # list of {"rotation":deg,"reflected":bool}, last is None
         known = [c for c in cells if c is not None]
-        rot_step = known[1]['rotation'] - known[0]['rotation']
+        rot_step = (known[1]['rotation'] - known[0]['rotation']) % 360
         for i in range(1, len(known)):
-            if known[i]['rotation'] - known[i-1]['rotation'] != rot_step:
+            if (known[i]['rotation'] - known[i-1]['rotation']) % 360 != rot_step:
                 return False, f"rotation step not constant: {known}"
             if known[i]['reflected'] == known[i-1]['reflected']:
                 return False, f"reflection does not toggle every step: {known}"
@@ -507,7 +507,7 @@ def check_shape_schema(spec):
         pred_rotation = (known[-1]['rotation'] + rot_step) % 360
         pred_reflected = not known[-1]['reflected']
         correct_opt = spec['options'][_correct_key(spec)]
-        ok = (correct_opt['rotation'] == pred_rotation and correct_opt['reflected'] == pred_reflected)
+        ok = ((correct_opt['rotation'] % 360) == pred_rotation and correct_opt['reflected'] == pred_reflected)
         return ok, f"predicted=({pred_rotation}°, reflected={pred_reflected}); option a={correct_opt}"
 
     if t == 'net_diagram':

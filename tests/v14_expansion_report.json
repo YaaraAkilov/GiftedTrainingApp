@@ -1,0 +1,31 @@
+{
+  "version": "v14_quality_expansion",
+  "before": 1785,
+  "generated_requested": 2080,
+  "added": 1396,
+  "total": 3181,
+  "new_by_category": {
+    "quantitative": 547,
+    "series": 469,
+    "shapes_spatial": 200,
+    "analogies": 180
+  },
+  "new_by_level": {
+    "5": 867,
+    "4": 529
+  },
+  "active_by_category": {
+    "quantitative": 608,
+    "series": 869,
+    "logic": 280,
+    "shapes_spatial": 320,
+    "analogies": 185,
+    "sentence_completion": 2,
+    "vocabulary": 5,
+    "reading_comprehension": 6
+  },
+  "active_by_level": {
+    "4": 1213,
+    "5": 1062
+  }
+}

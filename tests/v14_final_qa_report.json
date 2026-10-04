@@ -1,0 +1,26 @@
+{
+  "version": "v14_final_qa",
+  "total_questions": 3479,
+  "active_questions": 2573,
+  "active_by_category": {
+    "quantitative": 608,
+    "series": 869,
+    "logic": 578,
+    "shapes_spatial": 320,
+    "analogies": 185,
+    "sentence_completion": 2,
+    "vocabulary": 5,
+    "reading_comprehension": 6
+  },
+  "active_by_level": {
+    "4": 1213,
+    "5": 1360
+  },
+  "structural_or_level_issues": [],
+  "formal_failure_count": 0,
+  "formal_failures_sample": [],
+  "duplicate_ids": 0,
+  "duplicate_content_hashes": 0,
+  "simulation_candidate_count": 2573,
+  "qa_passed": true
+}

@@ -1,27 +1,20 @@
-# Release Candidate v9
+# GiftedTrainingApp v14
 
-## Status
-Release QA passed for the current local build.
+## Release focus
+- Multi-profile local student accounts with isolated progress/history.
+- Clear separation between Practice and Full Simulation modes.
+- Safe exit from active sessions with answered items preserved.
+- Full Simulation: 90 questions / 90 minutes; no hints or correctness feedback during the run.
+- Practice options: 10, adaptive, topic, 20 timed, 40 mixed, and 5-minute challenge.
+- Progress dashboard separates simulation results from practice results.
 
-- Question bank: 1,785 total
-- Published/active: 1,651
-- Active categories: 10
-- Active semantic families: 471
-- Release audit: PASS (0 errors)
-- Verbal semantic audit: PASS (0 detected rule violations after manual review/fixes)
-- Formal checker failures among active questions: 0
-- Exact active prompt duplicates: 0
-- Active visual fingerprint duplicates: 0
-- Active content-hash duplicates: 0
+## Content QA
+- 3,479 total question records retained in the source store.
+- 2,573 published/active questions after the v14 expansion and prior level screen.
+- Active pool contains only difficulty prior levels 4-5.
+- New v14 quality expansion added 1,696 high-difficulty candidates before deduplication/guards (1,396 from the first quality batch + 300 ordering-logic variants retained after guards).
+- Formal QA: 0 structural/level failures, 0 formal-check failures, 0 duplicate IDs, 0 duplicate content hashes.
+- The prior 772 screened-out low-level items remain archived in the source data; they are not selected by the published pool.
 
-## v9 QA fixes
-- Fixed four ambiguous/weak analogies and normalized semantic-review status.
-- Fixed Hebrew grammar in sentence completion and a duplicate/weak distractor.
-- Replaced a real/common word that had been used as a supposed nonword.
-- Corrected a nonword-context item whose prior keyed answer contradicted the sentence context.
-- Added a dedicated verbal semantic audit.
-- Adaptive selection now includes category-need weighting and stronger semantic-family diversity.
-- Simulation uses a 30-question blueprint across all 10 active categories with difficulty balancing and family diversity.
-
-## Publication note
-134 legacy/seed questions remain outside the active pool. They are retained for development/review and are not served to the child.
+## Important limitation
+Difficulty 4-5 is a rubric-based prior, not a validated Ministry-of-Education score. Real-world calibration requires usage data and/or expert review. Semantic questions remain a separate review concern; v14 generated analogies were reviewed as candidates, but this does not establish official equivalence to the Ministry exam.

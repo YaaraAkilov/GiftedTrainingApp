@@ -1,4 +1,4 @@
-# אתגר המחוננים — Release Candidate v7
+# אתגר המחוננים — Release Candidate v14
 
 אפליקציית אימון RTL בעברית לתלמידי כיתה ו׳ העולים לכיתה ז׳.
 
@@ -16,7 +16,7 @@
 
 ## יכולות אפליקציה
 - אימון מהיר, אדפטיבי, לפי נושא, אימון 20, אתגר 5 דקות ואתגר יומי.
-- סימולציה של 30 שאלות / 35 דקות.
+- סימולציית מבחן מלאה configurable in the app; current app mode is 90 questions / 90 minutes based on the project target, not an official Ministry blueprint.
 - הסברים ו-reasoning steps לאחר תשובה במצבי תרגול.
 - hints במצבי תרגול.
 - anti-repetition לפי question/template/semantic family.
@@ -45,3 +45,22 @@ python -m http.server 8000
 
 ## v9 Release QA
 v9 adds a dedicated verbal semantic audit, fixes identified verbal-content defects, strengthens adaptive category balancing, and uses a fixed 30-question simulation blueprint across all 10 active categories. See `RELEASE_STATUS.md` and `content_engine/reports/v9_release_audit.json`.
+
+## v10/v11 — Profiles, practice vs. full simulation
+
+- Multiple local student profiles with separate progress, mistakes, daily challenge, sessions and simulation history.
+- Automatic migration of the existing v9 local profile/history into the first v10 profile.
+- Clear separation between Practice/Learning and Full Exam Simulation.
+- Full simulation blueprint: 90 questions / 90 minutes, no hints or correctness feedback during the exam.
+- Safe Exit button during practice and simulation; answered questions remain saved and the interrupted session is marked abandoned.
+- Simulation results are shown separately from practice progress.
+- Profile switching from the top navigation and settings.
+- v11: dedicated simulation pre-start screen, clearer exam status, and separate simulation result disclaimer.
+- v11: top navigation displays the active student name and PWA cache bumped to v11.
+
+Note: profiles are local to the browser/device in v10; there is no cloud account sync yet.
+
+
+## v14 Level QA
+
+The active pool is conservatively restricted to questions screened at difficulty 4-5. All prior level 1-3 items are archived from the active pool. The 105-item simple averages template family is also archived despite its level-4 label because it does not meet the required reasoning-depth standard. See `tests/v14_level_qa_report.json`.
