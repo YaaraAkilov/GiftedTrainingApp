@@ -1,3 +1,9 @@
+# v17 QA hotfix
+
+Fixes the question publication filter to use the dataset release flag `validation.approved_for_pool` and adds cache-busting for the question bank.
+
+Expected active pool: 2,573 released questions at difficulty 4-5.
+
 # אתגר המחוננים — Release Candidate v15
 
 אפליקציית אימון RTL בעברית לתלמידי כיתה ו׳ העולים לכיתה ז׳.

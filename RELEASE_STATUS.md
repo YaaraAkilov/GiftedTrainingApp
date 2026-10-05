@@ -1,3 +1,10 @@
+# v17 Release Notes
+
+- Fixed a publication-filter/schema mismatch that could make the app appear empty.
+- Uses `validation.approved_for_pool === true` as the release gate.
+- Added cache-busting to `questions.json` and bumped the service-worker cache.
+- Expected active pool in the bundled dataset: 2,573 questions (difficulty 4-5).
+
 # GiftedTrainingApp v15
 
 ## Release focus

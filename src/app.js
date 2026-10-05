@@ -4,7 +4,7 @@ const state={
   currentSession:null,
   view:'home'
 };
-const KEY='gifted_training_state_v15';
+const KEY='gifted_training_state_v17';
 const LEGACY_KEYS=['gifted_training_state_v10','gifted_training_state_v9','gifted_training_state_v3'];
 function emptyHistory(){return {shown:[],attempts:[],mistakes:[],sessions:[],daily:{date:null,ids:[],completed:false}}}
 function normalizeHistory(h={}){const out={...emptyHistory(),...h};for(const k of ['shown','attempts','mistakes','sessions'])if(!Array.isArray(out[k]))out[k]=[];if(!out.daily||typeof out.daily!=='object')out.daily={date:null,ids:[],completed:false};return out}
@@ -40,10 +40,12 @@ function uid(){return Math.random().toString(36).slice(2)+Date.now().toString(36
 function questionIsPublished(q){
   if(!q) return false;
   const v=q.validation||{};
-  const semApproved=v.semantic_review?.status==='approved';
-  const explicitApproved=v.approved_for_pool===true;
-  const difficulty=Number(q.difficulty_calibrated??q.difficulty_prior??0);
-  return (explicitApproved||semApproved) && difficulty>=4;
+  // The release flag lives inside validation in this dataset.  Do not infer
+  // publication from semantic_review alone; that would expose reviewed but
+  // not explicitly released content.
+  const released = v.approved_for_pool===true || q.approved_for_pool===true;
+  const difficulty = Number(q.difficulty_calibrated ?? q.difficulty_prior ?? 0);
+  return released && difficulty>=4;
 }
 function approvedPool(sim=false){return state.questions.filter(q=>questionIsPublished(q)&&(!sim||(q.mode_compatibility||[]).includes('simulation')));}
 function activePool(){return approvedPool(false)}
@@ -419,7 +421,7 @@ function formatTime(sec){const m=Math.floor(sec/60),s=sec%60;return `${String(m)
 function esc(x=''){return String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 async function boot(){
   loadStore();
-  try{const r=await fetch('data/questions.json');const d=await r.json();state.questions=d.questions||[];renderProfilePicker();if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});}
+  try{const r=await fetch('data/questions.json?v=17');const d=await r.json();state.questions=d.questions||[];renderProfilePicker();if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});}
   catch(e){document.querySelector('#view').innerHTML='<div class="card"><h2>לא הצלחתי לטעון את המאגר</h2><p class="muted">בדקו שהאפליקציה רצה דרך שרת מקומי ולא בפתיחה ישירה של הקובץ.</p></div>';}
 }
 document.querySelector('#parentBtn').onclick=renderParent;document.querySelector('#settingsBtn').onclick=renderSettings;
