@@ -37,7 +37,14 @@ function loadStore(){
 }
 function saveStore(){const p=activeProfile();if(p){p.display_name=state.profile?.display_name||p.display_name;p.history=state.history}persistProfiles();}
 function uid(){return Math.random().toString(36).slice(2)+Date.now().toString(36)}
-function questionIsPublished(q){return q?.validation?.approved_for_pool===true;}
+function questionIsPublished(q){
+  if(!q) return false;
+  const v=q.validation||{};
+  const semApproved=v.semantic_review?.status==='approved';
+  const explicitApproved=v.approved_for_pool===true;
+  const difficulty=Number(q.difficulty_calibrated??q.difficulty_prior??0);
+  return (explicitApproved||semApproved) && difficulty>=4;
+}
 function approvedPool(sim=false){return state.questions.filter(q=>questionIsPublished(q)&&(!sim||(q.mode_compatibility||[]).includes('simulation')));}
 function activePool(){return approvedPool(false)}
 function recentIds(windowSize=80){return new Set(state.history.shown.slice(-windowSize));}
