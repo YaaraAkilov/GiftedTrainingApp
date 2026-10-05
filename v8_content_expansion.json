@@ -1,0 +1,19 @@
+{
+  "version": "v8",
+  "added": 151,
+  "added_by_category": {
+    "analogies": 31,
+    "sentence_completion": 30,
+    "vocabulary": 30,
+    "odd_one_out": 20,
+    "nonword_context": 20,
+    "reading_comprehension": 20
+  },
+  "total_questions": 1785,
+  "active_questions": 1651,
+  "notes": [
+    "Added original verbal coverage and 30 original analogies.",
+    "Legacy pending analogy pool remains untouched.",
+    "No existing question content was rewritten."
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "total": 1643,
+  "structural_errors": [],
+  "formal_failures": [],
+  "publication_errors": [],
+  "duplicate_ids": [],
+  "duplicate_content_hashes": [],
+  "semantic_pending": 74,
+  "active": 1509,
+  "by_category": {
+    "logic": 283,
+    "analogies": 74,
+    "quantitative": 584,
+    "series": 579,
+    "shapes_spatial": 123
+  },
+  "passed": true
+}

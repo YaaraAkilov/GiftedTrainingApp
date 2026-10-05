@@ -33,3 +33,7 @@ Difficulty 4-5 is a rubric-based prior, not a validated Ministry-of-Education sc
 - Local user profiles now support username + 4-8 digit PIN (PIN stored as SHA-256 hash).
 - Abandoned sessions can be resumed on the same device.
 - Cloud/cross-device accounts are not implemented in this release.
+
+
+### v19 recovery
+Fixed a startup ReferenceError caused by a missing resumeSession function. This was preventing boot() from running and leaving the page shell blank.

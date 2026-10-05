@@ -1,0 +1,23 @@
+{
+  "total": 1785,
+  "structural_errors": [],
+  "formal_failures": [],
+  "publication_errors": [],
+  "duplicate_ids": [],
+  "duplicate_content_hashes": [],
+  "semantic_pending": 74,
+  "active": 879,
+  "by_category": {
+    "logic": 295,
+    "analogies": 105,
+    "quantitative": 575,
+    "series": 556,
+    "shapes_spatial": 134,
+    "sentence_completion": 30,
+    "vocabulary": 30,
+    "odd_one_out": 20,
+    "nonword_context": 20,
+    "reading_comprehension": 20
+  },
+  "passed": true
+}

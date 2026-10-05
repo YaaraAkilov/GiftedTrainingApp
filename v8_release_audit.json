@@ -1,0 +1,30 @@
+{
+  "version": "v8",
+  "total": 1785,
+  "active": 1651,
+  "errors": [],
+  "counts_by_category": {
+    "quantitative": 560,
+    "series": 540,
+    "logic": 280,
+    "shapes_spatial": 120,
+    "analogies": 31,
+    "sentence_completion": 30,
+    "vocabulary": 30,
+    "odd_one_out": 20,
+    "nonword_context": 20,
+    "reading_comprehension": 20
+  },
+  "counts_by_difficulty": {
+    "1": 96,
+    "2": 174,
+    "3": 397,
+    "4": 789,
+    "5": 195
+  },
+  "notes": [
+    "Legacy 74 analogies remain pending semantic review; 31 new v8 analogies are approved for practice.",
+    "Active exact-prompt duplicates: 0.",
+    "All active questions have exactly 4 options and one correct option."
+  ]
+}
