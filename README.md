@@ -1,4 +1,4 @@
-# אתגר המחוננים — Release Candidate v14
+# אתגר המחוננים — Release Candidate v15
 
 אפליקציית אימון RTL בעברית לתלמידי כיתה ו׳ העולים לכיתה ז׳.
 
@@ -61,6 +61,6 @@ v9 adds a dedicated verbal semantic audit, fixes identified verbal-content defec
 Note: profiles are local to the browser/device in v10; there is no cloud account sync yet.
 
 
-## v14 Level QA
+## v15 Level QA
 
-The active pool is conservatively restricted to questions screened at difficulty 4-5. All prior level 1-3 items are archived from the active pool. The 105-item simple averages template family is also archived despite its level-4 label because it does not meet the required reasoning-depth standard. See `tests/v14_level_qa_report.json`.
+The active pool is conservatively restricted to questions screened at difficulty 4-5. All prior level 1-3 items are archived from the active pool. The 105-item simple averages template family is also archived despite its level-4 label because it does not meet the required reasoning-depth standard. See `tests/v15_level_qa_report.json`.
